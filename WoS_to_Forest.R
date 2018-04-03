@@ -1,4 +1,3 @@
-library(here)
 library(RSQLite)
 
 source("readFiles.R")
