@@ -11,7 +11,8 @@ conn <- dbConnect(SQLite(), "forest.sqlite")
 # Create tables
 
 ## Read file with SQL code
-sql.0 <- readLines("tables.sql")
+
+sql.0 <- readLines("RelDB/tables.sql")
 sql.1 <- paste(sql.0, collapse = '\n')
 
 ## Snippets (delimited by semicolons) for each table
