@@ -9,19 +9,39 @@ forest <- dbConnect(SQLite(), "forest.sqlite")
 # Getting Data
 
 wos.data <- readISI("data/ISI/savedrecs.txt")
+row.names(wos.data) <- NULL
+
+# files <- list.files("data/ISI/Literacy media/", full.names = TRUE)
+# wos.data.all <- readISI(files)
+
+# Cleaning Data
+
+# Reorganizing names
+
+names(wos.data) <- fields$forest
 
 ## Creting Entities
 ### Creating paper entity
 
-paper <- wos.data[,c("SR", "TI", "PY", "VL", "DI", "AF", "AB", "DE", "SO", "DT")]
-names(paper) <- c("id", "title", "year", "volume", "doi", "affiliation", "abstract",
-                  "keywords", "publisher", "document_type")
+paper <- wos.data[c("SR", "publisher", "title", "year", "volume", 
+                     "abstract", "document_type", "publication_type", "language",
+                     "authors_keywords", "reprint_address", "issn", "eissn", "29_character_source_abbreviation",
+                     "iso_source_abbreviation", "publication_date", "issue", "beginning_page", 
+                     "ending_page", "page_count", "web_of_science_categories", "research_areas", 
+                     "document_delivery_number", "accession_number", "keywords_plus", "funding_text", 
+                     "open_accesss_indicator", "pubmed_id", "special_issue", "part_number", "book_series_title",
+                     "conference_title", "conference_date", "conference_location", "conference_sponsor",
+                     "meeting_abstract", "editors", "book_series_title"),]
+
+# pendiente ids de publisher y funding , affiliate, 
 
 # Creating author and PaperAuthor entities 
+ 
+author <- wos.data[c("authors", "authors_full_name", "authors_email", "orcid",
+                     "research_id", "SR")]
 
-author <- wos.data[c("AU", "AF", "EM")]
-author$id_paper <- row.names(author)
-names(author) <- c("name", "short_name", "email", "id_paper")
+author$id_paper <- author$SR
+author$SR  <- NULL
 
 author.df <- data.frame(id_paper = character(),
                         id_author = character(), 
