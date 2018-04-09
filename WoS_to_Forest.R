@@ -118,6 +118,34 @@ referencelink <- referencelink.df.1
 
 # Publisher entity
 
+publisher <- wos.data[,c("publisher", "publisher_city", "publisher_address", "SR")]
+publisher$id_paper <- publisher$SR
+publisher$SR <- NULL
+publisher$id_publisher <- publisher$publisher
+
+publisher.df.1 <- data.frame(id_paper = character(),
+                             id_publisher = character(),
+                             publisher = character(),
+                             publisher_city = character(),
+                             publisher_address = character(),
+                             stringsAsFactors = FALSE
+                             )
+
+id_papers <- publisher$id_paper
+
+for (i in id_papers) {
+        
+        row_1 = publisher[publisher$id_paper == i,]
+        new_row_1 = data.frame(id_paper = i,
+                               strsplit(row_1$publisher, split = ","),
+                               strsplit(row_1$publisher, split = ","),
+                               publisher_city = row_1$publisher_city,
+                               publisher_address = row_1$publisher_address,
+                               stringsAsFactors = FALSE)
+                               
+        colnames(new_row_1) = c("id_paper", "id_publisher", "publisher", "publisher_city", "publisher_address")
+        publisher.df.1 = rbind(publisher.df.1, new_row_1)
+}
 
 
 # Loading data into forest database
