@@ -8,8 +8,10 @@ forest <- dbConnect(SQLite(), "forest.sqlite")
 
 # Getting Data
 
-wos.data <- readISI("data/ISI/savedrecs.txt")
+wos.data <- readISI("data/ISI/savedrecs.txt") 
 row.names(wos.data) <- NULL
+        
+
 
 # files <- list.files("data/ISI/Literacy media/", full.names = TRUE)
 # wos.data.all <- readISI(files)
@@ -45,8 +47,10 @@ author$SR  <- NULL
 
 author.df <- data.frame(id_paper = character(),
                         id_author = character(), 
-                        short_name = character(),
+                        author_full_name = character(),
                         email = character(),
+                        ordic = character(),
+                        research_id = character(),
                         stringsAsFactors = FALSE)
 
 id_papers <- author$id_paper
@@ -55,59 +59,66 @@ for (i in id_papers) {
         
         row_1 = author[author$id_paper == i,]
         new_row_1 = data.frame(id_paper = i,
-                               strsplit(row_1$name, split = ";"),
-                               strsplit(row_1$short_name, split = ";"),
-                               strsplit(row_1$email, split = ";+", fixed = TRUE))
-        colnames(new_row_1) = c("id_paper", "id_author", "short_name", "email")
+                               strsplit(row_1$authors, split = ";"),
+                               strsplit(row_1$authors_full_name, split = ";"),
+                               strsplit(row_1$authors_email, split = ";+", fixed = TRUE),
+                               ordic = row_1$orcid,
+                               research_id = row_1$research_id,
+                               stringsAsFactors = FALSE)
+        colnames(new_row_1) = c("id_paper", "id_author", "full_name", "email", "orcid", "research_id")
         author.df = rbind(author.df, new_row_1)
 }
 
 author.df.1 <- data.frame(apply(author.df, 2, trim), 
                           stringsAsFactors = FALSE)
-author <- author.df.1[,c("id_author", "short_name", "email")]
-author$name <- author$id_author
-author <- author[,c("id_author", "name", "short_name", "email")]
-names(author) <- c("id", "name", "short_name", "email")
 
-author.1 <- unique(author)
+author <- author.df.1[,c("id_author", "full_name", "email", "orcid", "research_id")]
+
+author <- unique(author)
 
 paperauthor <- author.df.1[,c("id_paper", "id_author")]
 
 # Creating Journal and PaperJournal entities
 
-journal.df <- wos.data[,c("SO","JI")]
-names(journal.df) <- c("name", "short_name")
-journal.df$id_journal <- journal.df$short_name
-journal.df$id_paper <- row.names(journal.df)
+journal.df <- wos.data[,c("iso_source_abbreviation", "publication_name", "SR")]
+journal.df$id_journal <- journal.df$iso_source_abbreviation
+journal.df$id_paper <- journal.df$SR
+journal.df$SR <- NULL
+journal <- journal.df[,c("id_journal","iso_source_abbreviation", "publication_name")]
 
-journal <- journal.df[, c("id_journal", "name", "short_name")]
-paperjournal <- journal.df[,c("id_journal", "id_paper")]
+paperjournal <- journal.df[,c("id_paper", "id_journal")]
+
+journal.df$id_journal <- journal.df$iso_source_abbreviation
 
 # Creating ReferenceLink entity
 
-referencelink.df <- wos.data[,c("SR","CR")]
-names(referencelink.df) <- c("id_paper", "reference")
+referencelink.df <- wos.data[,c("SR","cited_references")]
+referencelink.df$id_paper0 <- referencelink.df$SR
+referencelink.df$SR <- NULL
+names(referencelink.df)[1] <- "id_paper1" 
 
-referencelink.df.1 <- data.frame(id_paper = character(),
-                                 reference = character(),
+referencelink.df.1 <- data.frame(id_paper0 = character(),
+                                 id_paper1 = character(),
                                  stringsAsFactors = FALSE)
-id_papers <- referencelink.df$id_paper
+id_papers <- referencelink.df$id_paper0
 
 for (i in id_papers) {
         
-        row_1 = referencelink.df[referencelink.df$id_paper == i,]
-        new_row_1 = data.frame(id_paper = i,
-                               strsplit(row_1$reference, split = ";"),
+        row_1 = referencelink.df[referencelink.df$id_paper0 == i,]
+        new_row_1 = data.frame(id_paper0 = i,
+                               strsplit(row_1$id_paper1, split = ";"),
                                stringsAsFactors = FALSE)
-        colnames(new_row_1) = c("id_paper", "reference")
+        colnames(new_row_1) = c("id_paper0", "id_paper1")
         referencelink.df.1 = rbind(referencelink.df.1, new_row_1)
 }
 
-referencelink.df.1$reference <- trim(referencelink.df.1$reference)
-
-names(referencelink.df.1) <- c("id_paper0", "id_paper1")
+referencelink.df.1$id_paper1 <- trim(referencelink.df.1$id_paper1)
 
 referencelink <- referencelink.df.1
+
+# Publisher entity
+
+
 
 # Loading data into forest database
 
