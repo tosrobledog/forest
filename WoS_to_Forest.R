@@ -11,8 +11,6 @@ forest <- dbConnect(SQLite(), "forest.sqlite")
 wos.data <- readISI("data/ISI/savedrecs.txt") 
 row.names(wos.data) <- NULL
         
-
-
 # files <- list.files("data/ISI/Literacy media/", full.names = TRUE)
 # wos.data.all <- readISI(files)
 
@@ -22,10 +20,19 @@ row.names(wos.data) <- NULL
 
 names(wos.data) <- fields$forest
 
+# Completing ids of paper
+
+wos.data$SR.new <- ifelse(!is.na(wos.data$volume), paste0(wos.data$SR, sep = ", V", wos.data$volume), wos.data$SR)
+wos.data$SR.new <- ifelse(!is.na(wos.data$beginning_page), paste0(wos.data$SR.new, sep = ", P", wos.data$beginning_page), wos.data$SR.new)
+wos.data$SR.new <- ifelse(!is.na(wos.data$doi), paste0(wos.data$SR.new, sep = ", DOI ", wos.data$doi), wos.data$SR.new)
+
+wos.data$SR <- wos.data$SR.new
+wos.data$SR.new <- NULL
+
 ## Creting Entities
 ### Creating paper entity
 
-paper <- wos.data[c("SR", "publisher", "title", "year", "volume", 
+paper <- wos.data[,c("SR", "publisher", "title", "year_published", "volume",
                      "abstract", "document_type", "publication_type", "language",
                      "authors_keywords", "reprint_address", "issn", "eissn", "29_character_source_abbreviation",
                      "iso_source_abbreviation", "publication_date", "issue", "beginning_page", 
@@ -33,7 +40,7 @@ paper <- wos.data[c("SR", "publisher", "title", "year", "volume",
                      "document_delivery_number", "accession_number", "keywords_plus", "funding_text", 
                      "open_accesss_indicator", "pubmed_id", "special_issue", "part_number", "book_series_title",
                      "conference_title", "conference_date", "conference_location", "conference_sponsor",
-                     "meeting_abstract", "editors", "book_series_title"),]
+                     "meeting_abstract", "editors", "book_series_title")]
 
 # pendiente ids de publisher y funding , affiliate, 
 
@@ -147,16 +154,20 @@ for (i in id_papers) {
         publisher.df.1 = rbind(publisher.df.1, new_row_1)
 }
 
+paperpublisher <- publisher.df.1[, c("id_paper", "id_publisher")]
+
+publisher <- publisher.df.1[,c("id_publisher", "publisher", "publisher_city", "publisher_address")]
 
 # Loading data into forest database
 
 dbWriteTable(forest, "Paper", paper, append = TRUE)
-dbWriteTable(forest, "ReferenceLink", referencelink, append = TRUE)
 dbWriteTable(forest, "PaperAuthor", paperauthor, append = TRUE)
 dbWriteTable(forest, "Author", author, append = TRUE)
+dbWriteTable(forest, "Jorunal", journal, append = TRUE)
 dbWriteTable(forest, "PaperJournal", paperjournal, append = TRUE)
-dbWriteTable(forest, "Journal", journal, append = TRUE)
-
+dbWriteTable(forest, "ReferenceLink", referencelink, append = TRUE)
+dbWriteTable(forest, "PaperPublisher", paperpublisher, append = TRUE)
+dbWriteTable(forest, "Publisher", publisher, append = TRUE)
 
 ## Disconnecting database
 
