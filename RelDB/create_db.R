@@ -11,14 +11,25 @@ conn <- dbConnect(SQLite(), "forest.sqlite")
 # Create tables
 
 ## Read file with SQL code
-sql.0 <- readLines("tables.sql")
-sql.1 <- paste(sql.0, collapse = '\n')
+sql.statements.0 <- c(
+  readLines("RelDB/models/paper.sql"),
+  readLines("RelDB/models/referenceLink.sql"),
+  readLines("RelDB/models/author.sql"),
+  readLines("RelDB/models/paperAuthor.sql"),
+  readLines("RelDB/models/publisher.sql"),
+  readLines("RelDB/models/paperPublisher.sql"),
+  readLines("RelDB/models/journal.sql"),
+  readLines("RelDB/models/funding.sql"),
+  readLines("RelDB/models/conference.sql")
+)
+
+sql.statements.1 <- paste(sql.statements.0, collapse = '\n')
 
 ## Snippets (delimited by semicolons) for each table
-sql_statements <- strsplit(sql.1, "(?<=\\);)\\n", perl = TRUE)[[1]]
+sql.statements <- strsplit(sql.statements.1, "(?<=\\);)\\n", perl = TRUE)[[1]]
 
 ## Executing each query
-for (statement in sql_statements) {
+for (statement in sql.statements) {
   dbSendQuery(conn, statement)
 }
 
