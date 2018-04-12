@@ -32,15 +32,16 @@ wos.data$SR.new <- NULL
 ## Creting Entities
 ### Creating paper entity
 
-paper <- wos.data[,c("SR", "publisher", "title", "year_published", "volume",
-                     "abstract", "document_type", "publication_type", "language",
-                     "authors_keywords", "reprint_address", "issn", "eissn", "29_character_source_abbreviation",
-                     "iso_source_abbreviation", "publication_date", "issue", "beginning_page", 
-                     "ending_page", "page_count", "web_of_science_categories", "research_areas", 
-                     "document_delivery_number", "accession_number", "keywords_plus", "funding_text", 
-                     "open_accesss_indicator", "pubmed_id", "special_issue", "part_number", "book_series_title",
-                     "conference_title", "conference_date", "conference_location", "conference_sponsor",
-                     "meeting_abstract", "editors", "book_series_title")]
+paper <- wos.data[,c("SR", "doi", "title", "year_published", "volume",
+                     "abstract", "authors_keywords","document_type", "publication_type", "language",
+                      "reprint_address", "issn", "eissn", "29_character_source_abbreviation", "iso_source_abbreviation", "publication_date", "issue",
+                     "beginning_page", "ending_page", "page_count", "web_of_science_categories", 
+                     "research_areas", "document_delivery_number", "accession_number", "keywords_plus",  
+                     "open_accesss_indicator", "pubmed_id", "especial_issue", "part_number", "book_series_title",
+                     "meeting_abstract", "editors", "book_series_title", "funding_agency_grant_number",
+                     "conference_title")]
+
+names(paper)[]
 
 # pendiente ids de publisher y funding , affiliate, 
 
@@ -157,6 +158,32 @@ for (i in id_papers) {
 paperpublisher <- publisher.df.1[, c("id_paper", "id_publisher")]
 
 publisher <- publisher.df.1[,c("id_publisher", "publisher", "publisher_city", "publisher_address")]
+publisher <- unique(publisher)
+
+# Conference entity
+
+conference <- wos.data[,c("conference_title", "conference_date", "conference_location", 
+                          "conference_sponsor")]
+
+conference <- conference[complete.cases(conference) == TRUE,]
+
+# Fundinng entity
+
+funding <- wos.data[,c("funding_agency_grant_number", "funding_text")]
+funding <- funding[complete.cases(funding) == TRUE, ]
+
+
+# Changing id_names of the main tables
+
+names(paper)[1] <- "id"
+names(author)[1] <- "id"
+names(journal)[1] <- "id"
+names(publisher)[1] <- "id"
+names(funding)[1] <- "id"
+
+# Organizing paper entity names
+
+
 
 # Loading data into forest database
 
