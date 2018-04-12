@@ -35,6 +35,9 @@ CREATE TABLE Paper (
   
   id_funging TEXT,
   id_conference TEXT,
-  id_journal TEXT
-
+  id_journal TEXT,
+  
+  FOREIGN KEY (id_funging) REFERENCES Funding(id),
+  FOREIGN KEY (id_conference) REFERENCES Conference(id),
+  FOREIGN KEY (id_journal) REFERENCES Journal(id)
 );

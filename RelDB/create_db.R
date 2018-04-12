@@ -12,15 +12,15 @@ conn <- dbConnect(SQLite(), "forest.sqlite")
 
 ## Read file with SQL code
 sql.statements.0 <- c(
+  readLines("RelDB/models/journal.sql"),
+  readLines("RelDB/models/funding.sql"),
+  readLines("RelDB/models/conference.sql"),
   readLines("RelDB/models/paper.sql"),
   readLines("RelDB/models/referenceLink.sql"),
   readLines("RelDB/models/author.sql"),
   readLines("RelDB/models/paperAuthor.sql"),
   readLines("RelDB/models/publisher.sql"),
-  readLines("RelDB/models/paperPublisher.sql"),
-  readLines("RelDB/models/journal.sql"),
-  readLines("RelDB/models/funding.sql"),
-  readLines("RelDB/models/conference.sql")
+  readLines("RelDB/models/paperPublisher.sql")
 )
 
 sql.statements.1 <- paste(sql.statements.0, collapse = '\n')
