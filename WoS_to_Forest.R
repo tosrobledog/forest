@@ -32,22 +32,33 @@ wos.data$SR.new <- NULL
 ## Creting Entities
 ### Creating paper entity
 
-paper <- wos.data[,c("SR", "doi", "title", "year_published", "volume",
-                     "abstract", "authors_keywords","document_type", "publication_type", "language",
-                      "reprint_address", "issn", "eissn", "29_character_source_abbreviation", "iso_source_abbreviation", "publication_date", "issue",
-                     "beginning_page", "ending_page", "page_count", "web_of_science_categories", 
-                     "research_areas", "document_delivery_number", "accession_number", "keywords_plus",  
-                     "open_accesss_indicator", "pubmed_id", "especial_issue", "part_number", "book_series_title",
-                     "meeting_abstract", "editors", "book_series_title", "funding_agency_grant_number",
-                     "conference_title")]
+paper <- wos.data[, c("SR", "doi", "title", "year_published", "volume", "abstract", "authors_keywords",
+                    "document_type", "publication_type", "language", "reprint_address",
+                    "issn", "eissn", "source_abbreviation_29_character", "iso_source_abbreviation",
+                    "publication_date", "issue", "beginning_page", "ending_page", "page_count",
+                    "web_of_science_categories", "research_areas", "document_delivery_number",
+                    "accession_number", "keyword_plus", "open_access_indicator",
+                    "pudmed_id", "special_issue", "book_series_title", "meeting_abstract", "editors",
+                    "funding_agency_grant_number","conference_title", "publication_name")]
 
-names(paper)[]
+
+
+y <- 
+        c("id", "doi", "title", "year_published", "volume", "abstract", "authors_keywords",
+          "affiliation", "document_type", "publication_type", "language", "reprint_address",
+          "issn", "eissn", "source_abbreviation_29_character", "iso_source_abbreviation",
+          "publication_date", "issue", "beginning_page", "ending_page", "page_count",
+          "web_of_science_categories", "research_areas", "document_delivery_number",
+          "accession_number", "keyword_plus", "open_access_indicator", "pudmed_id",
+          "special_issue", "book_series_title", "meeting_abstract", "editors", "id_funging",
+          "id_conference", "id_journal")
 
 # pendiente ids de publisher y funding , affiliate, 
 
 # Creating author and PaperAuthor entities 
  
-author <- wos.data[c("authors", "authors_full_name", "authors_email", "orcid",
+author <- wos.data[c("authors", "authors_full_name", "authors_email", 
+                     "authors_address", "orcid",
                      "research_id", "SR")]
 
 author$id_paper <- author$SR
@@ -57,6 +68,7 @@ author.df <- data.frame(id_paper = character(),
                         id_author = character(), 
                         author_full_name = character(),
                         email = character(),
+                        author_address = character(),
                         ordic = character(),
                         research_id = character(),
                         stringsAsFactors = FALSE)
@@ -70,10 +82,12 @@ for (i in id_papers) {
                                strsplit(row_1$authors, split = ";"),
                                strsplit(row_1$authors_full_name, split = ";"),
                                strsplit(row_1$authors_email, split = ";+", fixed = TRUE),
+                               strsplit(row_1$authors_address, split = ";+", fixed = TRUE),
                                ordic = row_1$orcid,
                                research_id = row_1$research_id,
                                stringsAsFactors = FALSE)
-        colnames(new_row_1) = c("id_paper", "id_author", "full_name", "email", "orcid", "research_id")
+        colnames(new_row_1) = c("id_paper", "id_author", "full_name", "email", "author_address",
+                                "orcid", "research_id")
         author.df = rbind(author.df, new_row_1)
 }
 
@@ -85,6 +99,8 @@ author <- author.df.1[,c("id_author", "full_name", "email", "orcid", "research_i
 author <- unique(author)
 
 paperauthor <- author.df.1[,c("id_paper", "id_author")]
+
+
 
 # Creating Journal and PaperJournal entities
 
