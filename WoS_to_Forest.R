@@ -1,4 +1,5 @@
 library(RSQLite)
+library(tidyverse)
 
 source("readFiles.R")
 
@@ -41,8 +42,6 @@ paper <- wos.data[, c("SR", "doi", "title", "year_published", "volume", "abstrac
                     "pudmed_id", "special_issue", "book_series_title", "meeting_abstract", "editors",
                     "funding_agency_grant_number","conference_title", "publication_name")]
 
-
-
 y <- 
         c("id", "doi", "title", "year_published", "volume", "abstract", "authors_keywords",
           "affiliation", "document_type", "publication_type", "language", "reprint_address",
@@ -68,39 +67,88 @@ author.df <- data.frame(id_paper = character(),
                         id_author = character(), 
                         author_full_name = character(),
                         email = character(),
-                        author_address = character(),
                         ordic = character(),
                         research_id = character(),
                         stringsAsFactors = FALSE)
 
+address.df <- data.frame(author_full_name = character(),
+                         address = character(),
+                         stringsAsFactors = FALSE
+                         )
+
+
 id_papers <- author$id_paper
+
 
 for (i in id_papers) {
         
         row_1 = author[author$id_paper == i,]
-        new_row_1 = data.frame(id_paper = i,
-                               strsplit(row_1$authors, split = ";"),
-                               strsplit(row_1$authors_full_name, split = ";"),
-                               strsplit(row_1$authors_email, split = ";+", fixed = TRUE),
-                               strsplit(row_1$authors_address, split = ";+", fixed = TRUE),
-                               ordic = row_1$orcid,
-                               research_id = row_1$research_id,
-                               stringsAsFactors = FALSE)
-        colnames(new_row_1) = c("id_paper", "id_author", "full_name", "email", "author_address",
-                                "orcid", "research_id")
-        author.df = rbind(author.df, new_row_1)
+        authors_row = strsplit(row_1$authors, split = ";")
+        authors_full_row = strsplit(row_1$authors_full_name, split = ";   ")
+        email_row = strsplit(row_1$authors_email, "; ")
+        orcid_row = row_1$orcid
+        research_id_row = row_1$research_id
+        
+        if ((!is.na(row_1$authors_address))) { 
+                
+                
+                if (substring(row_1$authors_addres, 1, 1) != "[") {
+                        
+                        authors_full_name <- strsplit(row_1$authors_full_name, split = ";")
+                        authors_address <- strsplit(row_1$authors_address, ";   ",
+                                                    fixed = TRUE)
+                        authors_list <- cbind(authors_full_name, authors_address)
+                        author_mx_rows = t(plyr::ldply(authors_list, rbind))
+                        author_df_rows = data.frame(author_mx_rows, 
+                                                    stringsAsFactors = FALSE)
+                        
+                        names(author_df_rows) = c("author_full_name", "address")
+                        address.df = rbind(address.df, author_df_rows)
+                } else
+                
+                 address_split = strsplit(row_1$authors_address, ";   ", fixed = TRUE)
+                 df <- t(data.frame(lapply(address_split, strsplit, "]")))
+                 df <- data.frame(df, stringsAsFactors = FALSE)
+                 df$X1 <- gsub("\\[", "", df$X1)
+                 for (j in 1:length(df$X1)) {
+                         df.y <- data.frame(strsplit(df$X1, split = "; ")[[j]],
+                                            df$X2[[j]])
+                         names(df.y) = c("author_full_name", "address")
+                         address.df = rbind(address.df, df.y)
+                 }
+        }
+
+        authors_list = cbind(i, authors_row, authors_full_row, email_row, orcid_row,
+                             research_id_row)
+        
+        author_mx_rows = t(plyr::ldply(authors_list, rbind))
+        
+        author_df_rows = data.frame(author_mx_rows, 
+                                    stringsAsFactors = FALSE)
+
+        colnames(author_df_rows) = c("id_paper", "id_author", "full_name", "email", 
+                                     "orcid", "research_id")
+        author.df = rbind(author.df, author_df_rows)
+        
 }
+
+author.df$id_paper <- na.locf(author.df$id_paper)
 
 author.df.1 <- data.frame(apply(author.df, 2, trim), 
                           stringsAsFactors = FALSE)
 
-author <- author.df.1[,c("id_author", "full_name", "email", "orcid", "research_id")]
+author <- author.df.1[,c("id_author", "id_author", "full_name", "email", "orcid", "research_id")]
 
 author <- unique(author)
 
+names(author)[1] <- "id"
+names(author)[2] <- "name"
+
 paperauthor <- author.df.1[,c("id_paper", "id_author")]
 
+# Creating Address entity
 
+address <- address.df
 
 # Creating Journal and PaperJournal entities
 
@@ -109,10 +157,7 @@ journal.df$id_journal <- journal.df$iso_source_abbreviation
 journal.df$id_paper <- journal.df$SR
 journal.df$SR <- NULL
 journal <- journal.df[,c("id_journal","iso_source_abbreviation", "publication_name")]
-
-paperjournal <- journal.df[,c("id_paper", "id_journal")]
-
-journal.df$id_journal <- journal.df$iso_source_abbreviation
+names(journal)[1] <- "id"
 
 # Creating ReferenceLink entity
 
@@ -192,13 +237,11 @@ funding <- funding[complete.cases(funding) == TRUE, ]
 # Changing id_names of the main tables
 
 names(paper)[1] <- "id"
-names(author)[1] <- "id"
-names(journal)[1] <- "id"
 names(publisher)[1] <- "id"
 names(funding)[1] <- "id"
 
-# Organizing paper entity names
-
+names(paper)[33] <- "id_conference"
+names(paper)[34] <- "id_journal"
 
 
 # Loading data into forest database
