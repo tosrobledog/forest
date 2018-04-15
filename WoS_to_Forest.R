@@ -80,6 +80,10 @@ id_papers <- author$id_paper
 for (i in id_paper) {
         
         row_1 = author[author$id_paper == i,]
+        authors_row = strsplit(row_1$authors, split = ";")
+        authors_full_row = strsplit(row_1$authors_full_name, split = ";")
+        email_row = strsplit(row_1$authors_email, ";")
+        address_row = strsplit(row_1$authors_address, ";")
 }
 
 for (i in id_papers) {
