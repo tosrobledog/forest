@@ -1,22 +1,15 @@
-title: "Bibliometrics_indicators" 
-output: html_notebook ---
+---
+title: "Bibliometrics Indicators Report"
+output: html_notebook
+---
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by
-pressing *Ctrl+Alt+I*.
-When you save the notebook, an HTML file containing the code and output will be
-saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to
-preview the HTML file).
-The preview shows you a rendered HTML copy of the contents of the editor.
-Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead,
-the output of the chunk when it was last run in the editor is displayed.
+starting some bibliometrics_indicators based on the order Bibliometrix
 
+https://cran.r-project.org/web/packages/bibliometrix/vignettes/bibliometrix-vignette.html
 
-#starting some bibliometrics_indicators based on the order Bibliometrix
-#https://cran.r-project.org/web/packages/bibliometrix/vignettes/bibliometrix-vignette.html
+# PRODUCTION_INDICATORS
 
-#PRODUCTION_INDICATORS
-
-# 1. Annual Scientific Production
+## 1. Annual Scientific Production
 
 
 ```{r}
@@ -24,59 +17,59 @@ the output of the chunk when it was last run in the editor is displayed.
 ```
 
 
-# Most Productive Authors
+## Most Productive Authors
 
 ```{r}
 
 ```
 
-# Most Productive Countries (of corresponding authors)
+## Most Productive Countries (of corresponding authors)
 
 ```{r}
 
 ```
 
-# Total Citations per Country
-
-```{r}
-
-```
-
-
-# Most Relevant Sources
+## Total Citations per Country
 
 ```{r}
 
 ```
 
 
-# Most Relevant Keywords
+##Most Relevant Sources
 
 ```{r}
 
 ```
 
-#COLLABORATION_INDICATORS
 
-#Country Scientific Collaboration
-
-```{r}
-
-```
-
-#Co-Citation Network
+## Most Relevant Keywords
 
 ```{r}
 
 ```
 
-#Keyword co-occurrences
+# COLLABORATION_INDICATORS
+
+## Country Scientific Collaboration
 
 ```{r}
 
 ```
 
-#Historical Co-Citation Network
+## Co-Citation Network
+
+```{r}
+
+```
+
+## Keyword co-occurrences
+
+```{r}
+
+```
+
+## Historical Co-Citation Network
 ```{r}
 
 ```
