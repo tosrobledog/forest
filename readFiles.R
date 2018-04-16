@@ -9,7 +9,9 @@ readISI <- function(...) {
 }
 
 readScopus <- function(...) {
-  files <- do.call(readFiles, as.list(...))
-  M <- convert2df(files, dbsource = "scopus", format = "bibtex")
+  Documents <- readFiles(...)
+  M <- convert2df(Documents, dbsource = "scopus", format = "bibtex")
   M
 }
+
+

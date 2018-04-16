@@ -11,6 +11,7 @@ conn <- dbConnect(SQLite(), "forest.sqlite")
 # Create tables
 
 ## Read file with SQL code
+
 sql.statements.0 <- c(
   readLines("RelDB/models/journal.sql"),
   readLines("RelDB/models/funding.sql"),
