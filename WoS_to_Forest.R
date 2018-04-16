@@ -19,6 +19,8 @@ row.names(wos.data) <- NULL
 
 # Reorganizing names
 
+fields <- read.csv("fields_wos.csv")
+
 names(wos.data) <- fields$forest
 
 # Completing ids of paper
