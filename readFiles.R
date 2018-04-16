@@ -1,8 +1,10 @@
 library(bibliometrix)
 
-readISI <- function(...){
-  D <- readFiles(...)
-  M <- convert2df(D, dbsource = "isi", format = "plaintext")
+
+readISI <- function(...) {
+  files.0 <- do.call(readFiles, as.list(...))
+  files <- gsub("^null", "", files.0)
+  M <- convert2df(files, dbsource = "isi", format = "plaintext")
   M
 }
 
