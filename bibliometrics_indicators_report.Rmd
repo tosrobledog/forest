@@ -7,19 +7,55 @@ starting some bibliometrics_indicators based on the order Bibliometrix
 
 https://cran.r-project.org/web/packages/bibliometrix/vignettes/bibliometrix-vignette.html
 
+# Creating the environment
+
+```{r Creating the environment, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(xts)
+library(lubridate)
+```
+
+
+# Reading data
+
+```{r reading_data}
+paper <- read.csv("forest/paper.csv", stringsAsFactors = FALSE)
+author <- read.csv("forest/author.csv", stringsAsFactors = FALSE)
+paperauthor <- read.csv("forest/paperauthor.csv", stringsAsFactors = FALSE)
+journal <- read.csv("forest/journal.csv", stringsAsFactors = FALSE)
+paperpublisher <- read.csv("forest/paperpublisher.csv", stringsAsFactors = FALSE)
+conference <- read.csv("forest/conference.csv", stringsAsFactors = FALSE)
+referencelink <- read.csv("forest/referencelink.csv", stringsAsFactors = FALSE)
+address <- read.csv("forest/address.csv", stringsAsFactors = FALSE)
+```
+
+
 # PRODUCTION_INDICATORS
 
 ## 1. Annual Scientific Production
 
 
 ```{r}
-
+anual_production_table <- data.frame(table(paper$year_published),
+                                     stringsAsFactors = FALSE)
+names(anual_production_table) <- c("date", "count")
+anual_production_table$date <- as.character(anual_production_table$date)
+dates <- anual_production_table$date
+values <- anual_production_table$count
+anual_production_table.xts <- as.xts(values, order.by = as.Date(dates, "%Y"))
+plot(anual_production_table.xts, main = "AMID Anual Production Papers")
 ```
 
 
 ## Most Productive Authors
 
 ```{r}
+
+most_prod_author_1 <- data.frame(table(paperauthor$id_author), 
+                                 stringsAsFactors = FALSE)
+most_prod_author_2 <- data.frame(author = most_prod_author_1$Var1,
+                                 count = most_prod_author_1$Freq,
+                                 stringsAsFactors = FALSE)
+
 
 ```
 
