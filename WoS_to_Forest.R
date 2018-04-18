@@ -1,11 +1,7 @@
-library(RSQLite)
 library(tidyverse)
 
 source("readFiles.R")
 
-# Connecting with database
-
-forest <- dbConnect(SQLite(), "forest.sqlite")
 
 # Getting Data
 
@@ -235,19 +231,27 @@ names(funding)[1] <- "id"
 names(paper)[33] <- "id_conference"
 names(paper)[34] <- "id_journal"
 
+# Deleting dataframes
 
-# Loading data into forest database
+rm(address_split)
+rm(address.df)
+rm(author_df_rows)
+rm(author_mx_rows)
+rm(author.df.1)
+rm(authors_address)
+rm(authors_full_name)
+rm(authors_full_row)
+rm(authors_list)
+rm(authors_row)
+rm(df)
+rm(df.y)
+rm(email_row)
+rm(fields)
+rm(journal.df)
+rm(new_row_1)
+rm(publisher.df.1)
+rm(referencelink.df)
+rm(referencelink.df.1)
+rm(row_1)
+rm(author.df)
 
-dbWriteTable(forest, "Paper", paper, append = TRUE)
-dbWriteTable(forest, "PaperAuthor", paperauthor, append = TRUE)
-dbWriteTable(forest, "Author", author, append = TRUE)
-dbWriteTable(forest, "Jorunal", journal, append = TRUE)
-dbWriteTable(forest, "PaperJournal", paperjournal, append = TRUE)
-dbWriteTable(forest, "ReferenceLink", referencelink, append = TRUE)
-dbWriteTable(forest, "PaperPublisher", paperpublisher, append = TRUE)
-dbWriteTable(forest, "Publisher", publisher, append = TRUE)
-
-## Disconnecting database
-
-dbDisconnect(forest)
-unlink("forest.sqlite")
