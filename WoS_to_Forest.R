@@ -1,5 +1,6 @@
 library(tidyverse)
-
+library(zoo)
+library(gender)
 source("readFiles.R")
 
 
@@ -131,6 +132,25 @@ author <- unique(author)
 
 names(author)[1] <- "id"
 names(author)[2] <- "name"
+
+###### Género
+
+x<-author[,3]
+split1<-strsplit(x,", ")
+split2.df <- data.frame(gender=character())
+options(stringsAsFactors = FALSE)
+for (i in 1:length(split1))
+{
+        split2<-strsplit(split1[[i]][2]," ")
+        #print(gender(split2[[1]][1]))
+        gen1<-data.frame(gender(split2[[1]][1]))
+        #genero<-gen1[1,4]
+        split2.df<-rbind(split2.df,gen1[1,4])
+        #split2.df<-rbind(split2.df,split2[[1]][1])
+}
+names(split2.df) <- "Gender"
+author<-cbind(author,split2.df)
+######
 
 paperauthor <- author.df.1[,c("id_paper", "id_author")]
 
