@@ -5,33 +5,33 @@ source("readFiles.R")
 
 # Getting Data
 
-wos.data <- readISI("data/ISI/savedrecs.txt") 
-row.names(wos.data) <- NULL
+scopus.data <- readScopus("data/Scopus/scopus.bib") 
+row.names(scopus.data) <- NULL
 
 # files <- list.files("data/ISI/Literacy media/", full.names = TRUE)
-# wos.data.all <- readISI(files)
+# scopus.data.all <- readISI(files)
 
 # Cleaning Data
 
 # Reorganizing names
 
-fields <- read.csv("fields_wos.csv")
+fields <- read.csv2("fields_scopus.csv")
 
-names(wos.data) <- fields$forest
+names(scopus.data) <- fields$forest
 
 # Completing ids of paper
 
-wos.data$SR.new <- ifelse(!is.na(wos.data$volume), paste0(wos.data$SR, sep = ", V", wos.data$volume), wos.data$SR)
-wos.data$SR.new <- ifelse(!is.na(wos.data$beginning_page), paste0(wos.data$SR.new, sep = ", P", wos.data$beginning_page), wos.data$SR.new)
-wos.data$SR.new <- ifelse(!is.na(wos.data$doi), paste0(wos.data$SR.new, sep = ", DOI ", wos.data$doi), wos.data$SR.new)
+scopus.data$SR.new <- ifelse(!is.na(scopus.data$volume), paste0(scopus.data$SR, sep = ", V", scopus.data$volume), scopus.data$SR)
+scopus.data$SR.new <- ifelse(!is.na(scopus.data$beginning_page), paste0(scopus.data$SR.new, sep = ", P", scopus.data$beginning_page), scopus.data$SR.new)
+scopus.data$SR.new <- ifelse(!is.na(scopus.data$doi), paste0(scopus.data$SR.new, sep = ", DOI ", scopus.data$doi), scopus.data$SR.new)
 
-wos.data$SR <- wos.data$SR.new
-wos.data$SR.new <- NULL
+scopus.data$SR <- scopus.data$SR.new
+scopus.data$SR.new <- NULL
 
 ## Creting Entities
 ### Creating paper entity
 
-paper <- wos.data[, c("SR", "doi", "title", "year_published", "volume", "abstract", "authors_keywords",
+paper <- scopus.data[, c("SR", "doi", "title", "year_published", "volume", "abstract", "authors_keywords",
                       "document_type", "publication_type", "language", "reprint_address",
                       "issn", "eissn", "source_abbreviation_29_character", "iso_source_abbreviation",
                       "publication_date", "issue", "beginning_page", "ending_page", "page_count",
@@ -44,7 +44,7 @@ paper <- wos.data[, c("SR", "doi", "title", "year_published", "volume", "abstrac
 
 # Creating author and PaperAuthor entities 
 
-author <- wos.data[c("authors", "authors_full_name", "authors_email", 
+author <- scopus.data[c("authors", "authors_full_name", "authors_email", 
                      "authors_address", "orcid",
                      "research_id", "SR")]
 
@@ -140,7 +140,7 @@ address <- address.df
 
 # Creating Journal and PaperJournal entities
 
-journal.df <- wos.data[,c("iso_source_abbreviation", "publication_name", "SR")]
+journal.df <- scopus.data[,c("iso_source_abbreviation", "publication_name", "SR")]
 journal.df$id_journal <- journal.df$iso_source_abbreviation
 journal.df$id_paper <- journal.df$SR
 journal.df$SR <- NULL
@@ -149,7 +149,7 @@ names(journal)[1] <- "id"
 
 # Creating ReferenceLink entity
 
-referencelink.df <- wos.data[,c("SR","cited_references")]
+referencelink.df <- scopus.data[,c("SR","cited_references")]
 referencelink.df$id_paper0 <- referencelink.df$SR
 referencelink.df$SR <- NULL
 names(referencelink.df)[1] <- "id_paper1" 
@@ -175,7 +175,7 @@ referencelink <- referencelink.df.1
 
 # Publisher entity
 
-publisher <- wos.data[,c("publisher", "publisher_city", "publisher_address", "SR")]
+publisher <- scopus.data[,c("publisher", "publisher_city", "publisher_address", "SR")]
 publisher$id_paper <- publisher$SR
 publisher$SR <- NULL
 publisher$id_publisher <- publisher$publisher
@@ -211,14 +211,14 @@ publisher <- unique(publisher)
 
 # Conference entity
 
-conference <- wos.data[,c("conference_title", "conference_date", "conference_location", 
+conference <- scopus.data[,c("conference_title", "conference_date", "conference_location", 
                           "conference_sponsor")]
 
 conference <- conference[complete.cases(conference) == TRUE,]
 
 # Fundinng entity
 
-funding <- wos.data[,c("funding_agency_grant_number", "funding_text")]
+funding <- scopus.data[,c("funding_agency_grant_number", "funding_text")]
 funding <- funding[complete.cases(funding) == TRUE, ]
 
 
