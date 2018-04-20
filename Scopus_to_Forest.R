@@ -31,14 +31,18 @@ scopus.data$SR.new <- NULL
 ## Creting Entities
 ### Creating paper entity
 
-paper <- scopus.data[, c("SR", "doi", "title", "year_published", "volume", "abstract", "authors_keywords",
-                      "document_type", "publication_type", "language", "reprint_address",
-                      "issn", "eissn", "source_abbreviation_29_character", "iso_source_abbreviation",
-                      "publication_date", "issue", "beginning_page", "ending_page", "page_count",
-                      "web_of_science_categories", "research_areas", "document_delivery_number",
+paper <- scopus.data[, c("SR", "doi", "title", "year_published", "abstract", "authors_keywords",
+                      "document_type", "publication_type", "reprint_address",
+                      "beginning_page", "ending_page", "page_count",
+                      "web_of_science_categor"source_abbreviation_29_character", "iso_source_abbreviation",
+                      "publication_date", "issuies", "research_areas", "document_delivery_number",
                       "accession_number", "keyword_plus", "open_access_indicator",
                       "pudmed_id", "special_issue", "book_series_title", "meeting_abstract", "editors",
                       "funding_agency_grant_number","conference_title", "publication_name")]
+
+
+
+
 
 # pendiente ids de publisher y funding , affiliate, 
 
