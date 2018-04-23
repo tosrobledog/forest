@@ -1,82 +1,111 @@
-title: "Bibliometrics_indicators" 
-output: html_notebook ---
+---
+title: "Bibliometrics Indicators Report"
+output: html_notebook
+---
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by
-pressing *Ctrl+Alt+I*.
-When you save the notebook, an HTML file containing the code and output will be
-saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to
-preview the HTML file).
-The preview shows you a rendered HTML copy of the contents of the editor.
-Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead,
-the output of the chunk when it was last run in the editor is displayed.
+starting some bibliometrics_indicators based on the order Bibliometrix
+
+https://cran.r-project.org/web/packages/bibliometrix/vignettes/bibliometrix-vignette.html
+
+# Creating the environment
+
+```{r Creating the environment, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(xts)
+library(lubridate)
+```
 
 
-#starting some bibliometrics_indicators based on the order Bibliometrix
-#https://cran.r-project.org/web/packages/bibliometrix/vignettes/bibliometrix-vignette.html
+# Reading data
 
-#PRODUCTION_INDICATORS
+```{r reading_data}
+paper <- read.csv("forest/paper.csv", stringsAsFactors = FALSE)
+author <- read.csv("forest/author.csv", stringsAsFactors = FALSE)
+paperauthor <- read.csv("forest/paperauthor.csv", stringsAsFactors = FALSE)
+journal <- read.csv("forest/journal.csv", stringsAsFactors = FALSE)
+paperpublisher <- read.csv("forest/paperpublisher.csv", stringsAsFactors = FALSE)
+conference <- read.csv("forest/conference.csv", stringsAsFactors = FALSE)
+referencelink <- read.csv("forest/referencelink.csv", stringsAsFactors = FALSE)
+address <- read.csv("forest/address.csv", stringsAsFactors = FALSE)
+```
 
-# 1. Annual Scientific Production
 
+# PRODUCTION_INDICATORS
+
+## 1. Annual Scientific Production
+
+
+```{r}
+anual_production_table <- data.frame(table(paper$year_published),
+                                     stringsAsFactors = FALSE)
+names(anual_production_table) <- c("date", "count")
+anual_production_table$date <- as.character(anual_production_table$date)
+dates <- anual_production_table$date
+values <- anual_production_table$count
+anual_production_table.xts <- as.xts(values, order.by = as.Date(dates, "%Y"))
+plot(anual_production_table.xts, main = "AMID Anual Production Papers")
+```
+
+
+## Most Productive Authors
+
+```{r}
+
+most_prod_author_1 <- data.frame(table(paperauthor$id_author), 
+                                 stringsAsFactors = FALSE)
+most_prod_author_2 <- data.frame(author = most_prod_author_1$Var1,
+                                 count = most_prod_author_1$Freq,
+                                 stringsAsFactors = FALSE)
+
+
+```
+
+## Most Productive Countries (of corresponding authors)
+
+```{r}
+
+```
+
+## Total Citations per Country
 
 ```{r}
 
 ```
 
 
-# Most Productive Authors
-
-```{r}
-
-```
-
-# Most Productive Countries (of corresponding authors)
-
-```{r}
-
-```
-
-# Total Citations per Country
+##Most Relevant Sources
 
 ```{r}
 
 ```
 
 
-# Most Relevant Sources
+## Most Relevant Keywords
 
 ```{r}
 
 ```
 
+# COLLABORATION_INDICATORS
 
-# Most Relevant Keywords
-
-```{r}
-
-```
-
-#COLLABORATION_INDICATORS
-
-#Country Scientific Collaboration
+## Country Scientific Collaboration
 
 ```{r}
 
 ```
 
-#Co-Citation Network
+## Co-Citation Network
 
 ```{r}
 
 ```
 
-#Keyword co-occurrences
+## Keyword co-occurrences
 
 ```{r}
 
 ```
 
-#Historical Co-Citation Network
+## Historical Co-Citation Network
 ```{r}
 
 ```
