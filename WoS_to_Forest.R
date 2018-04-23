@@ -71,9 +71,9 @@ id_papers <- author$id_paper
 for (i in id_papers) {
         
         row_1 = author[author$id_paper == i,]
-        authors_row = strsplit(row_1$authors, split = ";")
-        authors_full_row = strsplit(row_1$authors_full_name, split = ";   ")
-        email_row = strsplit(row_1$authors_email, "; ")
+        authors_row = strsplit(row_1$authors, split = "; *")
+        authors_full_row = strsplit(row_1$authors_full_name, split = "; *")
+        email_row = strsplit(row_1$authors_email, "; *")
         orcid_row = row_1$orcid
         research_id_row = row_1$research_id
         
@@ -82,8 +82,8 @@ for (i in id_papers) {
                 
                 if (substring(row_1$authors_addres, 1, 1) != "[") {
                         
-                        authors_full_name <- strsplit(row_1$authors_full_name, split = ";")
-                        authors_address <- strsplit(row_1$authors_address, ";   ",
+                        authors_full_name <- strsplit(row_1$authors_full_name, split = "; *")
+                        authors_address <- strsplit(row_1$authors_address, "; *",
                                                     fixed = TRUE)
                         authors_list <- cbind(authors_full_name, authors_address)
                         author_mx_rows = t(plyr::ldply(authors_list, rbind))
@@ -94,12 +94,12 @@ for (i in id_papers) {
                         address.df = rbind(address.df, author_df_rows)
                 } else
                 
-                 address_split = strsplit(row_1$authors_address, ";   ", fixed = TRUE)
+                 address_split = strsplit(row_1$authors_address, "; *")
                  df <- t(data.frame(lapply(address_split, strsplit, "]")))
                  df <- data.frame(df, stringsAsFactors = FALSE)
                  df$X1 <- gsub("\\[", "", df$X1)
                  for (j in 1:length(df$X1)) {
-                         df.y <- data.frame(strsplit(df$X1, split = "; ")[[j]],
+                         df.y <- data.frame(strsplit(df$X1, split = "; *")[[j]],
                                             df$X2[[j]])
                          names(df.y) = c("author_full_name", "address")
                          address.df = rbind(address.df, df.y)
@@ -136,7 +136,30 @@ paperauthor <- author.df.1[,c("id_paper", "id_author")]
 
 # Creating Address entity
 
-address <- address.df
+address.df$author_full_name <- as.character(address.df$author_full_name)
+address.df$address <- as.character(address.df$address)
+
+address <- data.frame(
+        author_full_name = character(),
+        country = character(),
+        university = character(),
+        stringsAsFactors = FALSE
+)
+
+for(i in unique(address.df$author_full_name)) {
+        row.address <- address.df[address.df$author_full_name == i,]
+        reg.match <- str_match(row.address$address[1], "(\\S[^,]+), .+(?<=\\b)([^, ]+)(?=\\.)")
+        
+        address_list <- cbind(row.address$author_full_name, reg.match[3], reg.match[2])
+        address_df_rows = data.frame(address_list,
+                                    stringsAsFactors = FALSE)
+        
+        names(address_df_rows) = c("author_full_name", "country", "university")
+        address = rbind(address, address_df_rows)
+}
+
+address <- unique(address)
+
 
 # Creating Journal and PaperJournal entities
 
