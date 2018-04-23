@@ -1,0 +1,145 @@
+---
+title: "Tidyverse"
+output: html_notebook
+---
+
+# Creando el ambiente
+
+```{r}
+library(tidyverse)
+library(igraph)
+```
+
+# Adquiriendo los datos
+
+```{r}
+source("WoS_to_Forest.R")
+```
+
+# Limpiando los datos
+
+Para este ejemplo vamos a analizar las citaciones entre artículos y revistas importantes. Para esto es necesario construir la red a partir del dataframe ReferenceLink. 
+
+Eliminamos los valores NA's del dataframe referencelink
+
+```{r}
+referencelink.complete <- referencelink %>% na.omit()
+
+graph <- graph.data.frame(referencelink.complete, directed = TRUE)
+
+citaciones <- data.frame(id = V(graph)$name, 
+                         in_degree = degree(graph, 
+                                            mode = "in"),
+                         out_degree = degree(graph, 
+                                             mode = "out"),
+                         stringsAsFactors = FALSE)
+
+df_paper <- paper %>% left_join(citaciones) 
+dim(df_paper)
+```
+
+## Verbo select 
+
+Seleccionamos solo las variables que nos interesa analizar: id, año y revista. 
+
+```{r}
+df_paper_1 <- df_paper %>% select(id, year_published, source_abbreviation_29_character, in_degree, out_degree)
+head(df_paper_1)
+```
+
+## Verbo filter
+
+Filtramos los artículos publicados en el 2015
+
+```{r}
+df_paper_2 <- df_paper_1 %>% filter(year_published == 2015)
+head(df_paper_2)
+```
+
+### Combinamos los dos verbos: select and filter 
+
+```{r}
+df_paper_1 <- df_paper %>% select(id, year_published, source_abbreviation_29_character, in_degree, out_degree) %>% filter(year_published == 2015)
+
+head(df_paper_1)
+```
+
+## Verbo arrange
+
+Este verbo organiza los datos a partir de una columna. 
+
+```{r}
+df_paper_2 <- df_paper_1 %>% arrange(in_degree)
+head(df_paper_1)
+```
+
+También puede mostrar los valores de forma descendente
+
+```{r}
+df_paper_2 <- df_paper_1 %>% arrange(desc(in_degree))
+head(df_paper_2)
+```
+
+### Combinando filter y arrange
+
+```{r}
+df_paper_2 <- df_paper_1 %>% filter(year_published == 2005) %>% arrange(in_degree)
+head(df_paper_1)
+```
+
+## Verbo mutate
+
+Este verbo crea nuevas columnas 
+
+```{r}
+df_paper_2 <- df_paper_1 %>% mutate(citaciones_globales = round(rnorm(59, 100, 10), digits = 0))
+head(df_paper_2)
+```
+
+## Verbo summarise
+
+Este verbo permite realizar operaciones a los datos. Por ejemplo, queremos saber las citaciones totales.
+
+```{r}
+citaciones_totales <- df_paper %>% summarise(total = sum(in_degree, na.rm = TRUE))
+citaciones_totales
+```
+
+## Verbo group_by
+
+Sin embargo, sería más interesante saber las citaciones por año. Para esto se utiliza el verbo group_by
+
+```{r}
+citaciones_anuales <- df_paper %>% 
+  group_by(year_published) %>%
+  summarise(citaciones_anuales = sum(in_degree, na.rm = TRUE))
+
+citaciones_anuales
+```
+
+También podemos crear varias columnas
+
+```{r}
+citaciones_anuales_in_out <- df_paper %>% 
+  group_by(year_published) %>%
+  summarise(total_in_citaciones = sum(in_degree, na.rm = TRUE), 
+            total_out_citaciones = sum(out_degree, na.rm = TRUE))
+
+citaciones_anuales_in_out
+```
+
+### Preguntas
+
+Cúal fue la revista más citada en el 2005?
+
+Cuál es el artículo más citado en el 2010?
+
+Cuál es el artículo más citado por año?
+
+Cuáles son los valores de in_degree y out_degree por año?
+
+Cuáles son los valores de in_degree y out_degree en el 2005 agrupándolo por revista?
+
+Cuáles son los valores de in_degree y out_degree agrupándolos por año y revista?
+
+
