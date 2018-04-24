@@ -1,0 +1,146 @@
+---
+title: "Tidyverse ggplot"
+output: html_notebook
+---
+
+# Creando el ambiente
+
+```{r}
+library(tidyverse)
+library(igraph)
+```
+
+# Adquiriendo los datos
+
+```{r}
+source("WoS_to_Forest.R")
+```
+
+Añadimos las variables in_degree y out_degree al dataframe paper. 
+
+Para este ejemplo vamos a analizar las citaciones entre artículos y revistas importantes. Para esto es necesario construir la red a partir del dataframe ReferenceLink. 
+
+Eliminamos los valores NA's del dataframe referencelink
+
+```{r}
+referencelink.complete <- referencelink %>% na.omit()
+
+graph <- igraph::graph.data.frame(referencelink.complete, directed = TRUE)
+
+citaciones <- data.frame(id = V(graph)$name, 
+                         in_degree = degree(graph, 
+                                            mode = "in"),
+                         out_degree = degree(graph, 
+                                             mode = "out"),
+                         stringsAsFactors = FALSE)
+
+df_paper <- paper %>% left_join(citaciones) %>% select(id, year_published, id_journal, document_type, language,  in_degree, out_degree) %>% na.omit()
+dim(df_paper)
+```
+
+# Producción anual
+
+Primer constuimos el data frame con la cantidad de producción por año. Después realizamos la gráfica. 
+
+```{r}
+pccion_anual <- df_paper %>% 
+                  select(year_published) %>%
+                  group_by(year_published) %>%  
+                  summarise(count = n())
+
+# Creamos la gráfica
+
+ggplot(data = pccion_anual, aes(x = year_published, y = count)) +
+  geom_line() +
+  scale_x_continuous(breaks = 2002:2018) 
+```
+
+
+# Citaciones anuales (in_degree)
+
+```{r}
+in_degree_anuales <- df_paper %>% 
+                         select(year_published, in_degree) %>%
+                         na.omit() %>%
+                         group_by(year_published) %>%
+                         summarise(total_citas = sum(in_degree))
+
+ggplot(in_degree_anuales, aes(x = year_published, y = total_citas)) +
+  geom_line() + 
+  scale_x_continuous(breaks = 2002:2018)
+```
+
+# Citaciones anuales (out_degree)
+
+```{r}
+in_degree_anuales <- df_paper %>% 
+                         select(year_published, out_degree) %>%
+                         na.omit() %>%
+                         group_by(year_published) %>%
+                         summarise(total_citas = sum(out_degree))
+
+ggplot(in_degree_anuales, aes(x = year_published, y = total_citas)) +
+  geom_line() + 
+  scale_x_continuous(breaks = 2002:2018)
+```
+
+# Relación entre in_degree y out_degree citaciones. 
+
+En este ejemplo se analiza si hay una relación entre las citaciones que recibe un artículo y las citaciones que hace. Es decir si entre más citaciones tiene un artículo más citaciones va a recibir. 
+
+```{r}
+ggplot(df_paper, aes(x =out_degree, y = in_degree)) + geom_point()
+```
+
+# Visualizamos la distribución de las variables continuas: in_degree y out_degree
+
+```{r}
+ggplot(df_paper, aes(in_degree)) + geom_histogram()
+```
+
+```{r}
+ggplot(df_paper, aes(out_degree)) + geom_histogram()
+```
+
+# Transformando las variables a una distribución parecida a la normal.
+
+```{r}
+ggplot(df_paper, aes(in_degree)) + geom_histogram() + scale_x_log10()
+```
+
+```{r}
+ggplot(df_paper, aes(out_degree)) + geom_histogram() + scale_x_log10()
+```
+
+```{r}
+ggplot(df_paper, aes(x = out_degree, y = in_degree)) +
+  geom_point() +
+  scale_x_log10() + 
+  scale_y_log10()
+```
+
+Añadiendo colores
+
+```{r}
+ggplot(df_paper, aes(x = out_degree, y = in_degree, color = document_type)) +
+  geom_point() +
+  scale_x_log10() + 
+  scale_y_log10()
+```
+
+# Relación de citaciones por tipo de documento y por año
+
+```{r}
+
+df_paper_1 <- paper %>% left_join(citaciones) %>% select(id, year_published, document_type, id_journal, in_degree, out_degree) %>% na.omit() %>% mutate(h_index = round(rnorm(469, 20, 7), digits = 0))
+
+ggplot(df_paper_1, aes(x = document_type, y = in_degree, color =  )) +
+  geom_point() +
+  facet_wrap(~ document_type)
+
+```
+
+
+# Preguntas
+
+1. Cuáles tipos de documentos son más citados?  
