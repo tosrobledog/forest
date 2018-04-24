@@ -43,9 +43,9 @@ paper <- scopus.data[, c("SR", "doi", "title", "year_published",  "abstract", "a
 
 # Creating author and PaperAuthor entities 
 
-author <- scopus.data[c("authors", "authors_email", 
-                     "authors_address", "orcid",
-                     "research_id", "SR")]
+author <- scopus.data[c("SR", "authors", "AU_UN","AU1_UN",
+                        "AU_UN_NR",  "authors_address",)]
+
 
 author$id_paper <- author$SR
 author$SR  <- NULL
@@ -210,8 +210,8 @@ publisher <- unique(publisher)
 
 # Conference entity
 
-conference <- scopus.data[,c("conference_title", "conference_date", "conference_location", 
-                          "conference_sponsor")]
+conference <- scopus.data[,c("conference_title" )]
+
 
 conference <- conference[complete.cases(conference) == TRUE,]
 
