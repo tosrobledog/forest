@@ -21,8 +21,10 @@ source("WoS_to_Forest.R")
 ```{r data}
 
 
-year<-as.data.frame(table(paper$year_published))
-head(year,17)
+
+df_year<-paper %>% select(year_published) %>% 
+                   group_by(year_published) %>% 
+                   summarise(count = n())
 
 ```
 
