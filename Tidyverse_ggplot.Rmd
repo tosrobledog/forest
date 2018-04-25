@@ -95,7 +95,7 @@ ggplot(df_paper, aes(x =out_degree, y = in_degree)) + geom_point()
 # Visualizamos la distribución de las variables continuas: in_degree y out_degree
 
 ```{r}
-ggplot(df_paper, aes(in_degree)) + geom_histogram()
+ggplot(df_paper, aes(x = in_degree)) + geom_histogram()
 ```
 
 ```{r}
@@ -134,9 +134,9 @@ ggplot(df_paper, aes(x = out_degree, y = in_degree, color = document_type)) +
 
 df_paper_1 <- paper %>% left_join(citaciones) %>% select(id, year_published, document_type, id_journal, in_degree, out_degree) %>% na.omit() %>% mutate(h_index = round(rnorm(469, 20, 7), digits = 0))
 
-ggplot(df_paper_1, aes(x = document_type, y = in_degree, color =  )) +
+ggplot(df_paper_1, aes(x = document_type, y = in_degree, color =  document_type)) +
   geom_point() +
-  facet_wrap(~ document_type)
+  facet_wrap(~ year_published)
 
 ```
 

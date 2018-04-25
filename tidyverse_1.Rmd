@@ -25,7 +25,7 @@ Eliminamos los valores NA's del dataframe referencelink
 ```{r}
 referencelink.complete <- referencelink %>% na.omit()
 
-graph <- graph.data.frame(referencelink.complete, directed = TRUE)
+graph <- igraph::graph.data.frame(referencelink.complete, directed = TRUE)
 
 citaciones <- data.frame(id = V(graph)$name, 
                          in_degree = degree(graph, 
@@ -92,7 +92,7 @@ head(df_paper_1)
 Este verbo crea nuevas columnas 
 
 ```{r}
-df_paper_2 <- df_paper_1 %>% mutate(citaciones_globales = round(rnorm(59, 100, 10), digits = 0))
+df_paper_2 <- df_paper_1 %>% mutate(citaciones_globales = round(rnorm(59, 100, 10), digits = 0), otra = 1:59)
 head(df_paper_2)
 ```
 
@@ -111,7 +111,7 @@ Sin embargo, sería más interesante saber las citaciones por año. Para esto se
 
 ```{r}
 citaciones_anuales <- df_paper %>% 
-  group_by(year_published) %>%
+  group_by(iso_source_abbreviation) %>%
   summarise(citaciones_anuales = sum(in_degree, na.rm = TRUE))
 
 citaciones_anuales
@@ -131,6 +131,12 @@ citaciones_anuales_in_out
 ### Preguntas
 
 Cúal fue la revista más citada en el 2005?
+
+
+```{r}
+revista_citada <- df_paper %>% filter(year_published == 2005) %>% select(iso_source_abbreviation, in_degree) %>% arrange(desc(in_degree))
+```
+
 
 Cuál es el artículo más citado en el 2010?
 
