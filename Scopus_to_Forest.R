@@ -35,16 +35,18 @@ paper <- scopus.data[, c("SR", "doi", "title", "year_published",  "abstract", "a
                          "document_type", "reprint_address", "publication_name", "iso_source_abbreviation", 
                          "conference_title")]
 
-
-
-
-
 # pendiente ids de publisher y funding , affiliate, 
 
 # Creating author and PaperAuthor entities 
 
 author <- scopus.data[c("SR", "authors", "AU_UN","AU1_UN",
                         "AU_UN_NR",  "authors_address",)]
+
+
+
+
+#paper <- scopus.data[, c("DT1",  "ID", "cited_references", "conference_title", "accession_number","DB", )]
+
 
 
 author$id_paper <- author$SR
@@ -124,7 +126,7 @@ author.df$id_paper <- na.locf(author.df$id_paper)
 author.df.1 <- data.frame(apply(author.df, 2, trim), 
                           stringsAsFactors = FALSE)
 
-author <- author.df.1[,c("id_author", "id_author", "full_name", "email", "orcid", "research_id")]
+author <- author.df.1[,c("id_author", "full_name", "email", "orcid", "research_id")]
 
 author <- unique(author)
 
