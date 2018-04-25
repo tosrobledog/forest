@@ -37,7 +37,8 @@ df_year
 ```{r barggplot2}
 ggplot(df_year, aes(x=year_published, y=count)) +
   geom_bar(stat = "identity")+
-  scale_x_continuous(breaks = 2002:2018) + ggtitle("Annual Scientific Production by year") + 
+  scale_x_continuous(breaks = 2002:2018) + 
+  ggtitle("Annual Scientific Production by year") + 
   xlab("year") + ylab("Frequency")
   
 ```
@@ -46,9 +47,11 @@ ggplot(df_year, aes(x=year_published, y=count)) +
 ##Most Relevant Sources
 
 ```{r}
-journal.1<-df_paper%>%select(id_journal)%>%group_by(id_journal)%>%
-                      summarise(count=n())%>%arrange(desc(count))%>%
-                      head(10)
+journal.1<-df_paper%>%select(id_journal)%>%
+  group_by(id_journal)%>%
+  summarise(count=n())%>%arrange(desc(count))%>%
+  head(10)
+
 journal.1
 
 
