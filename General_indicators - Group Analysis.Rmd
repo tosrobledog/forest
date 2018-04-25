@@ -1,0 +1,63 @@
+---
+title: "General_Indicators"
+author: "Group analysis"
+date: "25/4/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#getting data
+
+```{r}
+source("WoS_to_Forest.R")
+
+```
+
+
+##Annual Scientific Production by year
+
+
+```{r data}
+
+
+
+df_year<-paper %>% select(year_published) %>% 
+                   group_by(year_published) %>% 
+                   summarise(count = n())
+
+df_year
+
+```
+
+
+
+```{r barggplot2}
+ggplot(df_year, aes(x=year_published, y=count)) +
+  geom_bar(stat = "identity")+
+  scale_x_continuous(breaks = 2002:2018) + ggtitle("Annual Scientific Production by year") + 
+  xlab("year") + ylab("Frequency")
+  
+```
+
+
+##Most Relevant Sources
+
+```{r}
+journal.1<-df_paper%>%select(id_journal)%>%group_by(id_journal)%>%
+                      summarise(count=n())%>%arrange(desc(count))%>%
+                      head(10)
+journal.1
+
+
+```
+
+```{r}
+ggplot(data = journal.1, aes(x = reorder(id_journal,count), y = count)) + 
+         geom_bar(stat = "identity") + 
+         theme(axis.text = element_text(angle = 45, hjust = 1))+
+         ggtitle("Top 10 Sources") + xlab("Sources") + ylab("# articles pusblished")
+```
+
