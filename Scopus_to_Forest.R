@@ -19,15 +19,6 @@ fields <- read.csv2("fields_scopus.csv")
 
 names(scopus.data) <- fields$forest
 
-# Completing ids of paper
-
-scopus.data$SR.new <- ifelse(!is.na(scopus.data$volume), paste0(scopus.data$SR, sep = ", V", scopus.data$volume), scopus.data$SR)
-scopus.data$SR.new <- ifelse(!is.na(scopus.data$beginning_page), paste0(scopus.data$SR.new, sep = ", P", scopus.data$beginning_page), scopus.data$SR.new)
-scopus.data$SR.new <- ifelse(!is.na(scopus.data$doi), paste0(scopus.data$SR.new, sep = ", DOI ", scopus.data$doi), scopus.data$SR.new)
-
-scopus.data$SR <- scopus.data$SR.new
-scopus.data$SR.new <- NULL
-
 ## Creting Entities
 ### Creating paper entity
 
@@ -39,8 +30,7 @@ paper <- scopus.data[, c("SR", "doi", "title", "year_published",  "abstract", "a
 
 # Creating author and PaperAuthor entities 
 
-author <- scopus.data[c("SR", "authors", "AU_UN","AU1_UN",
-                        "AU_UN_NR",  "authors_address",)]
+author <- scopus.data %>% select(SR, authors, AU_UN, AU1_UN, AU_UN_NR, authors_address)
 
 #PaperAuthor <- scopus.data[c("SR")]
 # ReferenceLink <- scopus.data[c("SR")]
