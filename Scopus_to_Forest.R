@@ -32,34 +32,23 @@ paper <- scopus.data[, c("SR", "doi", "title", "year_published",  "abstract", "a
 
 author <- scopus.data %>% select(SR, authors, AU_UN, AU1_UN, AU_UN_NR, authors_address)
 
-#PaperAuthor <- scopus.data[c("SR")]
-# ReferenceLink <- scopus.data[c("SR")]
-#Address <- scopus.data[c("SR")]
-#PaperPublisher <- scopus.data[c("SR")]
-# Publisher <- scopus.data[c("SR")]
-#Conference <- scopus.data[c("conference_title")]
-#Journal <- scopus.data[c("SR")]
-#Funding <- scopus.data[c("SR")]
-
-# scopus.data[, c("DT1",  "ID",  "cited_references", "DB" )]
-
-
-
 author$id_paper <- author$SR
 author$SR  <- NULL
 
 author.df <- data.frame(id_paper = character(),
                         id_author = character(), 
-                        author_full_name = character(),
+                        universidad = character(),
+                        stringsAsFactors = FALSE)
+                        
                         email = character(),
                         ordic = character(),
                         research_id = character(),
                         stringsAsFactors = FALSE)
 
-address.df <- data.frame(author_full_name = character(),
+address.df <- data.frame(id_paper = character(),
                          address = character(),
                          stringsAsFactors = FALSE
-)
+                        )
 
 
 id_papers <- author$id_paper
