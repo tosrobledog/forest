@@ -33,7 +33,7 @@ scopus.data$SR.new <- NULL
 
 paper <- scopus.data[, c("SR", "doi", "title", "year_published",  "abstract", "authors_keywords",
                          "document_type", "reprint_address", "publication_name", "iso_source_abbreviation", 
-                         "conference_title")]
+                          "accession_number")]
 
 # pendiente ids de publisher y funding , affiliate, 
 
@@ -42,10 +42,16 @@ paper <- scopus.data[, c("SR", "doi", "title", "year_published",  "abstract", "a
 author <- scopus.data[c("SR", "authors", "AU_UN","AU1_UN",
                         "AU_UN_NR",  "authors_address",)]
 
+#PaperAuthor <- scopus.data[c("SR")]
+# ReferenceLink <- scopus.data[c("SR")]
+#Address <- scopus.data[c("SR")]
+#PaperPublisher <- scopus.data[c("SR")]
+# Publisher <- scopus.data[c("SR")]
+#Conference <- scopus.data[c("conference_title")]
+#Journal <- scopus.data[c("SR")]
+#Funding <- scopus.data[c("SR")]
 
-
-
-#paper <- scopus.data[, c("DT1",  "ID", "cited_references", "conference_title", "accession_number","DB", )]
+# scopus.data[, c("DT1",  "ID",  "cited_references", "DB" )]
 
 
 
