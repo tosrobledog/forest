@@ -39,17 +39,11 @@ author.df <- data.frame(id_paper = character(),
                         id_author = character(), 
                         universidad = character(),
                         stringsAsFactors = FALSE)
-                        
-                        email = character(),
-                        ordic = character(),
-                        research_id = character(),
-                        stringsAsFactors = FALSE)
 
 address.df <- data.frame(id_paper = character(),
                          address = character(),
                          stringsAsFactors = FALSE
                         )
-
 
 id_papers <- author$id_paper
 
@@ -58,58 +52,57 @@ for (i in id_papers) {
   
   row_1 = author[author$id_paper == i,]
   authors_row = strsplit(row_1$authors, split = ";")
-  authors_full_row = strsplit(row_1$authors_full_name, split = ";   ")
-  email_row = strsplit(row_1$authors_email, "; ")
-  orcid_row = row_1$orcid
-  research_id_row = row_1$research_id
+  authors_full_row = strsplit(row_1$AU_UN, split = ";")
+# 
+#   if ((!is.na(row_1$authors_address))) { 
+#     
+#     
+#     if (substring(row_1$authors_addres, 1, 1) != "[") {
+#       
+#       authors_full_name <- strsplit(row_1$authors_full_name, split = ";")
+#       authors_address <- strsplit(row_1$authors_address, ";   ",
+#                                   fixed = TRUE)
+#       authors_list <- cbind(authors_full_name, authors_address)
+#       author_mx_rows = t(plyr::ldply(authors_list, rbind))
+#       author_df_rows = data.frame(author_mx_rows, 
+#                                   stringsAsFactors = FALSE)
+#       
+#       names(author_df_rows) = c("author_full_name", "address")
+#       address.df = rbind(address.df, author_df_rows)
+#     } else
+#       
+#       address_split = strsplit(row_1$authors_address, ";   ", fixed = TRUE)
+#     df <- t(data.frame(lapply(address_split, strsplit, "]")))
+#     df <- data.frame(df, stringsAsFactors = FALSE)
+#     df$X1 <- gsub("\\[", "", df$X1)
+#     for (j in 1:length(df$X1)) {
+#       df.y <- data.frame(strsplit(df$X1, split = "; ")[[j]],
+#                          df$X2[[j]])
+#       names(df.y) = c("author_full_name", "address")
+#       address.df = rbind(address.df, df.y)
+#     }
+#   }
   
-  if ((!is.na(row_1$authors_address))) { 
-    
-    
-    if (substring(row_1$authors_addres, 1, 1) != "[") {
-      
-      authors_full_name <- strsplit(row_1$authors_full_name, split = ";")
-      authors_address <- strsplit(row_1$authors_address, ";   ",
-                                  fixed = TRUE)
-      authors_list <- cbind(authors_full_name, authors_address)
-      author_mx_rows = t(plyr::ldply(authors_list, rbind))
-      author_df_rows = data.frame(author_mx_rows, 
-                                  stringsAsFactors = FALSE)
-      
-      names(author_df_rows) = c("author_full_name", "address")
-      address.df = rbind(address.df, author_df_rows)
-    } else
-      
-      address_split = strsplit(row_1$authors_address, ";   ", fixed = TRUE)
-    df <- t(data.frame(lapply(address_split, strsplit, "]")))
-    df <- data.frame(df, stringsAsFactors = FALSE)
-    df$X1 <- gsub("\\[", "", df$X1)
-    for (j in 1:length(df$X1)) {
-      df.y <- data.frame(strsplit(df$X1, split = "; ")[[j]],
-                         df$X2[[j]])
-      names(df.y) = c("author_full_name", "address")
-      address.df = rbind(address.df, df.y)
-    }
-  }
-  
-  authors_list = cbind(i, authors_row, authors_full_row, email_row, orcid_row,
-                       research_id_row)
+  authors_list = cbind(i, authors_row, authors_full_row)
   
   author_mx_rows = t(plyr::ldply(authors_list, rbind))
   
   author_df_rows = data.frame(author_mx_rows, 
                               stringsAsFactors = FALSE)
   
-  colnames(author_df_rows) = c("id_paper", "id_author", "full_name", "email", 
-                               "orcid", "research_id")
+  colnames(author_df_rows) = c("id_paper", "id_author", "university")
   author.df = rbind(author.df, author_df_rows)
   
 }
 
 author.df$id_paper <- na.locf(author.df$id_paper)
+author.df$university <- na.locf(author.df$university)
+author.df$id_author <- na.locf(author.df$id_author)
 
 author.df.1 <- data.frame(apply(author.df, 2, trim), 
                           stringsAsFactors = FALSE)
+
+##
 
 author <- author.df.1[,c("id_author", "full_name", "email", "orcid", "research_id")]
 
