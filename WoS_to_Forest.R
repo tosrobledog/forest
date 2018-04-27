@@ -1,6 +1,6 @@
 library(tidyverse)
 library(zoo)
-library(gender)
+library(genderizeR)
 source("readFiles.R")
 
 
@@ -141,14 +141,19 @@ split2.df <- data.frame(gender=character())
 options(stringsAsFactors = FALSE)
 for (i in 1:length(split1))
 {
+        # split2<-strsplit(split1[[i]][2]," ")
+        # #print(gender(split2[[1]][1]))
+        # gen1<-data.frame(gender(split2[[1]][1]))
+        # #genero<-gen1[1,4]
+        # split2.df<-rbind(split2.df,gen1[1,4])
+        # #split2.df<-rbind(split2.df,split2[[1]][1])
         split2<-strsplit(split1[[i]][2]," ")
-        #print(gender(split2[[1]][1]))
-        gen1<-data.frame(gender(split2[[1]][1]))
-        #genero<-gen1[1,4]
-        split2.df<-rbind(split2.df,gen1[1,4])
-        #split2.df<-rbind(split2.df,split2[[1]][1])
+        tryCatch({
+                gen1<-data.frame(findGivenNames(split2[[1]][1], progress=FALSE))
+        }, error=function(e){})
+        split2.df<-rbind(split2.df,gen1[1,2])
 }
-names(split2.df) <- "Gender"
+names(split2.df) <- "GenderizeR"
 author<-cbind(author,split2.df)
 ######
 
