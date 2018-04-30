@@ -149,7 +149,20 @@ Cuáles son los valores de in_degree y out_degree en el 2005 agrupándolo por re
 Cuáles son los valores de in_degree y out_degree agrupándolos por año y revista?
 
 ```{r}
-df_paper %>% filter(document_type == c("ARTICLE", "EDITORIAL MATERIAL", "REVIEW"), in_degree > 0)  %>% select(id, year_published, in_degree, document_type) %>% ggplot(aes(x = document_type, y = in_degree)) + geom_col() + facet_wrap(~ year_published)
+df_paper %>% filter(document_type == c("ARTICLE", "EDITORIAL MATERIAL", "REVIEW"), in_degree > 0) %>% select(id, year_published, in_degree, document_type) %>% ggplot(aes(x = document_type, y = in_degree)) + geom_col() + facet_wrap(~ year_published)
   
 ```
+
+```{r}
+df_paper %>% filter(year_published == 2010) %>% select(title, in_degree) %>% group_by(title) %>% arrange(desc(in_degree)) %>% top_n(1)
+```
+
+Cuál es el artículo más citado por año?
+
+```{r}
+
+df_paper %>% select(title, year_published, in_degree) %>% group_by(title, year_published) %>% filter(in_degree == max(in_degree, na.rm = TRUE)) 
+
+```
+
 
