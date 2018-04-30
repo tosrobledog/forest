@@ -148,8 +148,11 @@ address <- data.frame(
 )
 
 for(i in unique(address.df$author_full_name)) {
-        row.address <- address.df[address.df$author_full_name == i,]
-        reg.match <- str_match(row.address$address[1], "(\\S[^,]+), .+(?<=\\b)([^, ]+)(?=\\.)")
+        row.address.0 <- address.df[address.df$author_full_name == i,]
+        row.address <- row.address.0[complete.cases(row.address.0),]
+        reg.match <- str_match(
+                row.address$address, "(\\S[^,]+), .+(?<=\\b)([^, ]+)(?=\\.)"
+        )
         
         address_list <- cbind(row.address$author_full_name, reg.match[3], reg.match[2])
         address_df_rows = data.frame(address_list,
@@ -260,7 +263,7 @@ names(paper)[34] <- "id_journal"
 rm(address_split)
 rm(address.df.0)
 rm(address.df.1)
-rm(address.df)
+# rm(address.df)
 rm(author_df_rows)
 rm(author_mx_rows)
 rm(author.df.1)
