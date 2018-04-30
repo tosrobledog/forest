@@ -260,20 +260,16 @@ names(paper)[34] <- "id_journal"
 
 # Deleting dataframes
 
-rm(address_split)
-rm(address.df.0)
-rm(address.df.1)
-# rm(address.df)
-rm(author_df_rows)
-rm(author_mx_rows)
-rm(author.df.1)
+rm(address_split, address.df.0, address.df.1, address.df,
+   address_df_rows, address_list, final_address)
+rm(author_df_rows, author_mx_rows)
+rm(author.df.1, author_split)
+rm(reg.match, row.address, row.address.0)
 rm(authors_address)
 rm(authors_full_name)
 rm(authors_full_row)
 rm(authors_list)
 rm(authors_row)
-rm(df)
-rm(df.y)
 rm(email_row)
 rm(fields)
 rm(journal.df)
@@ -283,4 +279,3 @@ rm(referencelink.df)
 rm(referencelink.df.1)
 rm(row_1)
 rm(author.df)
-
