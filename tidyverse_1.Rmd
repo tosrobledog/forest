@@ -148,4 +148,8 @@ Cuáles son los valores de in_degree y out_degree en el 2005 agrupándolo por re
 
 Cuáles son los valores de in_degree y out_degree agrupándolos por año y revista?
 
+```{r}
+df_paper %>% filter(document_type == c("ARTICLE", "EDITORIAL MATERIAL", "REVIEW"), in_degree > 0)  %>% select(id, year_published, in_degree, document_type) %>% ggplot(aes(x = document_type, y = in_degree)) + geom_col() + facet_wrap(~ year_published)
+  
+```
 
