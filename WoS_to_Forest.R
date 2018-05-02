@@ -142,29 +142,30 @@ options(stringsAsFactors = FALSE)
 for (i in 1:length(split1))
 {
         ###Se escoge el nombre del autor, y se desecha el apellido del mismo
-        # split2<-strsplit(split1[[i]][2]," ")  
+         split2<-strsplit(split1[[i]][2]," ")  
         # #print(gender(split2[[1]][1]))
         
         ###Se escoge el primer nombre, ya que varios autores tienen dos nombres, se le 
         ###aplica el gender y se convierte en dataframe para obtener el género fácilmente
-        # gen1<-data.frame(gender(split2[[1]][1]))
+         gen1<-data.frame(gender(split2[[1]][1]))
         # #genero<-gen1[1,4]
         
         ###Se selecciona la ubicación en donde aparece el género, y con rbind se van guardando
         ###uno debajo del otro en un dataframe
-        # split2.df<-rbind(split2.df,gen1[1,4])
+         split2.df<-rbind(split2.df,gen1[1,4])
         # #split2.df<-rbind(split2.df,split2[[1]][1])
-        split2<-strsplit(split1[[i]][2]," ")
-        tryCatch({
-                gen1<-data.frame(findGivenNames(split2[[1]][1], progress=FALSE))
-        }, error=function(e){})
-        split2.df<-rbind(split2.df,gen1[1,2])
+        #split2<-strsplit(split1[[i]][2]," ")
+        #tryCatch({
+        #        gen1<-data.frame(findGivenNames(split2[[1]][1], progress=FALSE))
+        #}, error=function(e){})
+        #split2.df<-rbind(split2.df,gen1[1,2])
 }
-#names(split2.df) <- "Gender"
-names(split2.df) <- "GenderizeR"
+names(split2.df) <- "Gender"
+#names(split2.df) <- "GenderizeR"
 
 ###Se unifica el dataframe de autores con el de género para que quede en uno solo
 author<-cbind(author,split2.df)
+author$Gender_R<-ifelse(is.na(author$GenderizeR), author$Gender, author$GenderizeR)
 ######
 
 paperauthor <- author.df.1[,c("id_paper", "id_author")]
