@@ -9,6 +9,17 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+##Creating environmental
+
+```{r}
+library(tidyverse)
+library(igraph)
+library(RSQLite)
+
+```
+
+
+
 #getting data
 
 ```{r}
@@ -47,7 +58,7 @@ ggplot(df_year, aes(x=year_published, y=count)) +
 ##Most Relevant Sources
 
 ```{r}
-journal.1<-df_paper%>%select(id_journal)%>%
+journal.1<-paper%>%select(id_journal)%>%
   group_by(id_journal)%>%
   summarise(count=n())%>%arrange(desc(count))%>%
   head(10)
@@ -62,5 +73,27 @@ ggplot(data = journal.1, aes(x = reorder(id_journal,count), y = count)) +
          geom_bar(stat = "identity") + 
          theme(axis.text = element_text(angle = 45, hjust = 1))+
          ggtitle("Top 10 Sources") + xlab("Sources") + ylab("# articles pusblished")
+```
+
+
+```{r}
+kwplus<-paper%>%select(keyword_plus)%>%na.omit()
+
+
+kwplus.1<-as.data.frame(unlist(strsplit(kwplus, ";")))
+```
+
+```{r}
+kwplus<-paper$keyword_plus
+kwplus.1<-as.data.frame(unlist(strsplit(kwplus, ";")))
+colnames(kwplus.1)<- "keywords_wos"
+
+kwplus.1$keywords_wos[kwplus.1== ""]<-NA
+
+kwplus.1<-kwplus.1%>%na.omit()
+
+kwplus.2 <- kwplus.1 %>%summarise(count = n())
+
+
 ```
 
