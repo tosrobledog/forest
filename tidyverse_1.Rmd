@@ -165,4 +165,10 @@ df_paper %>% select(title, year_published, in_degree) %>% group_by(title, year_p
 
 ```
 
+Correlación entre citaciones (in_degree) y referencias (out_degree)
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+df_paper %>% ggplot(aes(x = out_degree, y = in_degree )) + geom_point() + scale_y_log10() + geom_smooth(method = "lm", se = FALSE)
+```
+
 
