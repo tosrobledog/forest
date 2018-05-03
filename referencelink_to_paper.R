@@ -10,7 +10,7 @@ referencelink.complete.right <-
   referencelink.complete %>%
   filter(str_detect(id_paper1, "\\[[:alpha:]]*,[[:digit:]]*"))
   
-# Extract the rows that are different from paper
+# Extract the rows that are differen
 
 diff_rows <- referencelink.complete %>% 
   anti_join(paper, by = c("id_paper1" = "id")) %>%
