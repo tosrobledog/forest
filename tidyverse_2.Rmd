@@ -1,0 +1,154 @@
+---
+title: "Tidyverse 2"
+output: html_notebook
+---
+
+# creando el ambiente
+
+```{r}
+library(tidyverse)
+library(igraph)
+library(reshape2)
+```
+
+
+```{r}
+referencelink.complete <- referencelink %>% na.omit()
+
+graph <- igraph::graph.data.frame(referencelink.complete, directed = TRUE)
+
+citaciones <- data.frame(id = V(graph)$name, 
+                         citaciones = degree(graph, 
+                                            mode = "in"),
+                         referencias = degree(graph, 
+                                             mode = "out"),
+                         stringsAsFactors = FALSE)
+
+df_paper <- paper %>% left_join(citaciones) 
+dim(df_paper)
+```
+
+# Análisis bibliométrico preliminar
+
+## Relevancia del área científica
+
+Cuáles son los valores totales de producción (cantidad de artículos), citaciones y referencias por año?
+
+```{r}
+df_paper %>%
+  select(year_published, citaciones, referencias) %>%
+  group_by(year_published) %>%
+  na.omit() %>%
+  summarise(total_articulos = n(),
+            total_citaciones = sum(citaciones), 
+            total_referencias = sum(referencias))
+```
+
+Mostrando gráficamente estos valores. Primero es necesario escalarlos. 
+
+```{r}
+
+df_paper_plot_1 <- 
+  
+  df_paper %>%
+    select(year_published, citaciones, referencias) %>%
+    group_by(year_published) %>%
+    na.omit() %>%
+    summarise(total_articulos = n(),
+              total_citaciones = sum(citaciones), 
+              total_referencias = sum(referencias)) %>%
+    mutate(total_articulos_sc = scale(total_articulos),
+           total_citaciones_sc = scale(total_citaciones),
+           total_referencias_sc = scale(total_referencias)) %>%
+    select(year_published, total_articulos_sc, total_citaciones_sc, total_referencias_sc)
+
+df_paper_plot_1
+```
+
+```{r}
+
+df_paper_plot_1_melt <- melt(df_paper_plot_1, id = "year_published")
+
+ggplot(data = df_paper_plot_1_melt, aes(x = year_published, y = value, colour = variable)) + geom_line()
+```
+
+## Importancia de los artículos
+
+Cuáles son los 5 artículos más citados?
+
+```{r}
+df_paper %>% 
+  select(id, citaciones) %>% 
+  group_by(id) %>% 
+  summarise(mas_citado = sum(citaciones,
+                             na.rm = TRUE)) %>%
+  top_n(n = 5)
+```
+
+Cuál es el artículo más citado por año?
+
+```{r}
+df_paper %>% 
+  select(id, year_published, citaciones) %>% 
+  group_by(year_published) %>%
+  filter(citaciones == max(citaciones, na.rm = TRUE)) %>%
+  arrange(year_published)
+```
+
+Cuál es el artículo más citado en el 2010?
+
+```{r}
+
+df_paper %>% filter(year_published == 2010) %>%
+  filter(citaciones == max(citaciones, na.rm = TRUE)) %>%
+  select(id, citaciones)
+
+```
+
+## Importancia de las revistas
+
+Cuáles son los valores de citaciones y referencias en el 2004 agrupándolo por revista?
+
+```{r}
+df_paper %>% 
+  filter(year_published == 2004) %>%
+  select(id_journal, citaciones, referencias) %>%
+  na.omit() %>% 
+  group_by(id_journal) %>%
+  summarise(total_citaciones = sum(citaciones),
+            total_referencias = sum(referencias)) %>%
+  arrange(desc(total_citaciones))
+  
+```
+
+Cuáles son los valores de citaciones y referencias agrupándolos por año y revista?
+
+```{r}
+df_paper %>% 
+  select(id_journal, year_published, citaciones, referencias) %>%
+  group_by(year_published, id_journal) %>%
+  na.omit() %>%
+  summarise(total_citaciones = sum(citaciones),
+            tota_referencias = sum(referencias)) %>%
+  arrange(year_published)
+  
+  
+```
+
+## Importancia de los autores
+
+Cuáles son los autores más citados?
+
+
+Cuáles son los autores más productivos?
+
+
+## Importancia de las instituciones
+
+Cuáles son las intituciones más citadas?
+
+Cuáles son las instituciones más productivas?
+
+## Importancia de los paises
+
+
