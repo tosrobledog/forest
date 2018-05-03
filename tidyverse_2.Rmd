@@ -5,6 +5,7 @@ output: html_notebook
 
 # creando el ambiente
 
+
 ```{r}
 library(tidyverse)
 library(igraph)
