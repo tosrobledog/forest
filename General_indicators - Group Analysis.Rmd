@@ -58,7 +58,7 @@ ggplot(df_year, aes(x=year_published, y=count)) +
 ##Most Relevant Sources
 
 ```{r}
-journal.1<-paper%>%select(id_journal)%>%
+journal.1<-journal.df%>%select(id_journal)%>%
   group_by(id_journal)%>%
   summarise(count=n())%>%arrange(desc(count))%>%
   head(10)
