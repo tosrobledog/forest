@@ -94,16 +94,17 @@ for (i in id_papers) {
                         address.df = rbind(address.df, author_df_rows)
                 } else
                 
-                 address_split = strsplit(row_1$authors_address, "; *")
-                 df <- t(data.frame(lapply(address_split, strsplit, "]")))
-                 df <- data.frame(df, stringsAsFactors = FALSE)
-                 df$X1 <- gsub("\\[", "", df$X1)
-                 for (j in 1:length(df$X1)) {
-                         df.y <- data.frame(strsplit(df$X1, split = "; *")[[j]],
-                                            df$X2[[j]])
-                         names(df.y) = c("author_full_name", "address")
-                         address.df = rbind(address.df, df.y)
-                 }
+                address_split = strsplit(row_1$authors_address, "; {3}")
+                author_split <- map(address_split, str_match, "(?<=\\[).+(?=\\])")
+                final_address <- map(address_split, str_match, "(?<=\\] ).+")
+                
+                address.df.0 <- data.frame(author_split, final_address, stringsAsFactors = FALSE)
+                names(address.df.0) <- c("author_full_name", "address")
+                
+                address.df.1 <- separate_rows(address.df.0, author_full_name, sep = "; ")
+                
+                address.df = rbind(address.df, address.df.1)
+                
         }
 
         authors_list = cbind(i, authors_row, authors_full_row, email_row, orcid_row,
@@ -147,18 +148,21 @@ address <- data.frame(
 )
 
 for(i in unique(address.df$author_full_name)) {
-        row.address <- address.df[address.df$author_full_name == i,]
-        reg.match <- str_match(row.address$address[1], "(\\S[^,]+), .+(?<=\\b)([^, ]+)(?=\\.)")
+        row.address.0 <- address.df[address.df$author_full_name == i,]
+        row.address <- row.address.0[complete.cases(row.address.0),]
+        reg.match <- str_match(
+                row.address$address, "(\\S[^,]+), .+(?<=\\b)([^, ]+)(?=\\.)"
+        )
         
         address_list <- cbind(row.address$author_full_name, reg.match[3], reg.match[2])
         address_df_rows = data.frame(address_list,
-                                    stringsAsFactors = FALSE)
+                                     stringsAsFactors = FALSE)
         
         names(address_df_rows) = c("author_full_name", "country", "university")
         address = rbind(address, address_df_rows)
 }
 
-address <- unique(address)
+address <- unique(address[!is.na(address$author_full_name),])
 
 
 # Creating Journal and PaperJournal entities
@@ -256,18 +260,16 @@ names(paper)[34] <- "id_journal"
 
 # Deleting dataframes
 
-rm(address_split)
-rm(address.df)
-rm(author_df_rows)
-rm(author_mx_rows)
-rm(author.df.1)
+rm(address_split, address.df.0, address.df.1, address.df,
+   address_df_rows, address_list, final_address)
+rm(author_df_rows, author_mx_rows)
+rm(author.df.1, author_split)
+rm(reg.match, row.address, row.address.0)
 rm(authors_address)
 rm(authors_full_name)
 rm(authors_full_row)
 rm(authors_list)
 rm(authors_row)
-rm(df)
-rm(df.y)
 rm(email_row)
 rm(fields)
 rm(journal.df)
@@ -277,4 +279,3 @@ rm(referencelink.df)
 rm(referencelink.df.1)
 rm(row_1)
 rm(author.df)
-
