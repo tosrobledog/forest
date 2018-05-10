@@ -140,16 +140,43 @@ df_paper %>%
 
 Cuáles son los autores más citados?
 
+```{r}
+df_paper %>% 
+  select(id, citaciones) %>%
+  right_join(paperauthor, by = c("id" = "id_paper")) %>%
+  na.omit() %>% 
+  group_by(id_author) %>%
+  summarise(total_citaciones = sum(citaciones)) %>%
+  arrange(desc(total_citaciones)) %>%
+  head()
+```
 
 Cuáles son los autores más productivos?
 
+```{r}
+df_paper %>% 
+  select(id, citaciones) %>%
+  right_join(paperauthor, by = c("id" = "id_paper")) %>%
+  na.omit()
+```
 
 ## Importancia de las instituciones
 
 Cuáles son las intituciones más citadas?
 
+
+
+
 Cuáles son las instituciones más productivas?
 
 ## Importancia de los paises
+
+
+
+## Subáreas del conocimiento
+
+Minería de datos
+
+## Analizar los tipos de documentos y áreas del conocimiento
 
 
