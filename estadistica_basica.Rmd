@@ -1,0 +1,95 @@
+---
+title: "medidas de tendencia central, regresion simple, regresion multiple"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Datos
+
+```{r }
+a <- df_paper %>%
+  select(year_published, citaciones, referencias) %>%
+  group_by(year_published) %>%
+  na.omit() %>%
+  summarise(total_articulos = n(),
+            total_citaciones = sum(citaciones), 
+            total_referencias = sum(referencias))
+head(a)
+```
+
+## Media y mediana
+
+
+```{r }
+media <- mean(a$total_articulos)
+mediana <- median(a$total_articulos)
+m <- c(media, mediana)
+m 
+```
+```{r}
+hist(a$total_articulos, col="lightblue")
+abline(v = c(27.58, 23), col=c("red","blue"), lty=c(1,2), lws=c(1,3))
+
+```
+
+```{r}
+d <- density(a$total_articulos)
+plot(d)
+abline(v = c(27.58, 23), col=c("red","blue"), lty=c(1,2), lws=c(1,3))
+```
+La media se encuentra al sumar todos los numeros y dividir entre el numero de valores del conjunto. La mediana es el valor medio cuando un conjunto de datos se ordena de mayor a menor. La moda es el número que se presenta con mayor frecuencia
+
+## Desviacion estandar
+```{r}
+sd <- sd(a$total_articulos)
+sd
+```
+grado de dispersión de los datos. Es la variación esperada con respecto a la media
+
+## Regrsion simple
+La calidad del artículo depende de la cantidad de referencias?
+
+```{r}
+y <- a$total_citaciones
+x <- a$total_referencias
+
+modelo <- lm(y ~ x)
+summary(modelo)
+```
+
+```{r}
+plot(modelo)
+```
+
+## modelo con datos normalizados
+
+```{r}
+
+y.1 <- sqrt(y )
+x.1 <- sqrt(x )
+modelo.1 <- lm(y.1 ~ x.1)
+summary(modelo.1)
+```
+
+
+```{r}
+hist(x.1)
+```
+
+
+```{r}
+plot(modelo.1)
+```
+
+
+```{r}
+
+
+```
+
+
+
+
