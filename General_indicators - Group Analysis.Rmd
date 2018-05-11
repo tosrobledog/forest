@@ -97,3 +97,13 @@ kwplus.2 <- kwplus.1 %>%summarise(count = n())
 
 ```
 
+##Importancia de los autores
+##Cuáles son los autores más productivos?
+
+```{r}
+author_more_productives<-paperauthor %>% na.omit()%>%
+select(id_author)%>%group_by(id_author) %>% 
+tally()%>% arrange(desc(n))%>% top_n(n = 6)
+
+```
+
