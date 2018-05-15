@@ -5,9 +5,33 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r}
+library(tidyverse)
+library(igraph)
+library(reshape2)
 ```
 
 ## Datos
+
+
+```{r}
+referencelink.complete <- referencelink %>% na.omit()
+
+graph <- igraph::graph.data.frame(referencelink.complete, directed = TRUE)
+
+citaciones <- data.frame(id = V(graph)$name, 
+                         citaciones = degree(graph, 
+                                            mode = "in"),
+                         referencias = degree(graph, 
+                                             mode = "out"),
+                         stringsAsFactors = FALSE)
+
+df_paper <- paper %>% left_join(citaciones) 
+dim(df_paper)
+```
 
 ```{r }
 a <- df_paper %>%
