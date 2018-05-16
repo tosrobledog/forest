@@ -1,0 +1,12 @@
+name: shinyapp
+title: shinyapp
+username:
+account: roblesebas
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 344088
+bundleId: 1377273
+url: https://roblesebas.shinyapps.io/shinyapp/
+when: 1526492592.38378
+asMultiple: FALSE
+asStatic: FALSE
