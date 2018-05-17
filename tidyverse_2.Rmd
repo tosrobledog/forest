@@ -179,4 +179,4 @@ Minería de datos
 
 ## Analizar los tipos de documentos y áreas del conocimiento
 
-
+## Bases de datos indexadas
