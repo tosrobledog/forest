@@ -1,0 +1,75 @@
+---
+title: "Sub groups co-authorships"
+output: html_notebook
+---
+
+# Creating the environment
+
+```{r}
+library(tidyverse)
+library(igraph)
+```
+
+# Getting data 
+
+```{r}
+
+```
+
+# Cleaning Data
+
+```{r}
+subgroups_co_authors <-
+  paperauthor %>%
+  na.omit()
+```
+
+
+# Tidying data 
+
+```{r}
+edgelist <- data.frame(Source = character(),
+                       Target = character(),
+                       stringsAsFactors = FALSE)
+
+list_ids_1 <- 
+  subgroups_co_authors %>% 
+  count(id_paper) %>%
+  filter(n >= 2) %>%
+  select(id_paper) %>%
+  distinct() %>%
+  as.list()
+
+for (i in list_ids_1) {
+  df_1 = author_1[author_1$doi == i,]
+  df_2 = combn(df_1$author, 2, simplify = FALSE )
+  df_3 = data.frame((t(data.frame(df_2))), unique(df_1$year), unique(df_1$month), i)
+  colnames(df_3) = c("Source", "Target", "year", "month", "doi")
+  edgelist = rbind(edgelist, df_3)
+}
+  
+```
+
+Vivi's code
+
+```{r}
+author_1$author <- toupper(author_1$author) # Nombres en mayúscula
+author_1$author <- trim(author_1$author)
+author_1$author <- gsub("(?<=, [[:alpha:]]).*", "", author_1$author, perl=TRUE) # se elige el apellido y la inicial del nombre 
+
+edgelist <- data.frame(Source = character(), Target = character(), year = character(), month = character(), doi = character(), stringsAsFactors = FALSE)
+
+table_ids <- table(author_1$doi)
+table_ids_0 <- data.frame(table_ids)
+table_ids_1 <- table_ids_0[table_ids_0$Freq >= 2,]
+list_ids_1 <- unique(table_ids_1$Var1)
+
+for (i in list_ids_1) {
+  df_1 = author_1[author_1$doi == i,]
+  df_2 = combn(df_1$author, 2, simplify = FALSE )
+  df_3 = data.frame((t(data.frame(df_2))), unique(df_1$year), unique(df_1$month), i)
+  colnames(df_3) = c("Source", "Target", "year", "month", "doi")
+  edgelist = rbind(edgelist, df_3)
+}
+```
+
