@@ -177,6 +177,16 @@ $(document).ready(function () {
 <h1>Creando el entorno</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShpZ3JhcGgpXG5saWJyYXJ5KENJTk5BKVxuXG4jIEZ1bmN0aW9ucyBcblxuZ2lhbnRfY29tcG9uZW50IDwtIGZ1bmN0aW9uKGdyYXBoKSB7XG5jbCA8LSBjbHVzdGVycyhncmFwaClcbmluZHVjZWQuc3ViZ3JhcGgoZ3JhcGgsIHdoaWNoKGNsJG1lbWJlcnNoaXAgPT0gd2hpY2gubWF4KGNsJGNzaXplKSkpfVxuYGBgIn0= -->
+<pre class="r"><code>library(igraph)
+library(CINNA)
+
+# Functions 
+
+giant_component &lt;- function(graph) {
+cl &lt;- clusters(graph)
+induced.subgraph(graph, which(cl$membership == which.max(cl$csize)))}</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -197,14 +207,13 @@ $(document).ready(function () {
 <p>Eliminamos loops de los nodos, eliminamos nodos de entrada 1 y salida 0, y al final, hallamos el componente gigante.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ3JhcGhfMSA8LSBzaW1wbGlmeShncmFwaClcbnN1bW1hcnkoZ3JhcGhfMSlcbmBgYCJ9 -->
-<pre class="r"><code>graph_1 &lt;- simplify(graph)
-summary(graph_1)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ3JhcGhfMSA8LSBcbiAgc2ltcGxpZnkoZ3JhcGhfMSkgJT4lXG4gIGRlbGV0ZS52ZXJ0aWNlcyh3aGljaChkZWdyZWUoZ3JhcGhfMSxtb2RlID0gXCJpblwiKSA9PSAxICZcbiAgICAgICAgICAgICAgICAgICAgICAgIGRlZ3JlZShncmFwaF8xLG1vZGUgPSBcIm91dFwiKSA9PSAwKSkgJT4lXG4gIGdpYW50X2NvbXBvbmVudCgpXG5gYGAifQ== -->
+<pre class="r"><code>graph_1 &lt;- 
+  simplify(graph_1) %&gt;%
+  delete.vertices(which(degree(graph_1,mode = &quot;in&quot;) == 1 &amp;
+                        degree(graph_1,mode = &quot;out&quot;) == 0)) %&gt;%
+  giant_component()</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSUdSQVBIIGRlYWU3YWYgRE4tLSAxMjg0OSAxNTM1NSAtLSBcbisgYXR0cjogbmFtZSAodi9jKVxuIn0= -->
-<pre><code>IGRAPH deae7af DN-- 12849 15355 -- 
-+ attr: name (v/c)</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -212,9 +221,9 @@ summary(graph_1)</code></pre>
 <h2>Hallamos las subares</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGFibGUoVihncmFwaF8xKSRzdWJfYXJlYSlcblxuYGBgIn0= -->
-<pre class="r"><code>table(V(graph_1)$sub_area)
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxudGFibGUoVihncmFwaF8xKSRzdWJfYXJlYSlcblxuYGBgXG5gYGAifQ== -->
+<p><code>r</code>r table(V(graph_1)$sub_area)</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiXG4gIDEgICAyICAgMyAgIDQgICA1ICAgNiAgIDcgICA4ICAgOSAgMTAgIDExICAxMiAgMTMgIDE0ICAxNSAgMTYgIDE3ICAxOCAgMTkgXG4yNzkgIDQ3IDI1MiAzNDMgIDkwICA2OCAgNDkgIDM1ICA0NiAxMTQgIDM5ICA0MyAgNzggICA4ICAgNyAgMTcgICAzICAgMyAgIDMgXG4ifQ== -->
 <pre><code>
@@ -227,7 +236,7 @@ summary(graph_1)</code></pre>
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyBDcmVhbmRvIGVsIGVudG9ybm8KCmBgYHtyfQpsaWJyYXJ5KGlncmFwaCkKbGlicmFyeShDSU5OQSkKCiMgRnVuY3Rpb25zIAoKZ2lhbnRfY29tcG9uZW50IDwtIGZ1bmN0aW9uKGdyYXBoKSB7CmNsIDwtIGNsdXN0ZXJzKGdyYXBoKQppbmR1Y2VkLnN1YmdyYXBoKGdyYXBoLCB3aGljaChjbCRtZW1iZXJzaGlwID09IHdoaWNoLm1heChjbCRjc2l6ZSkpKX0KYGBgCgojIEFkcXVpcmllbmRvIGxvcyBkYXRvczogY3JlYW5kbyBsYSByZWQgZGUgY28tY2l0YWNpb25lcwoKYGBge3J9CmdyYXBoXzEgPC0gCiAgcmVmZXJlbmNlbGluayAlPiUKICBuYS5vbWl0KCkgJT4lCiAgaWdyYXBoOjpncmFwaC5kYXRhLmZyYW1lKGRpcmVjdGVkID0gVFJVRSkgCmBgYAoKIyMgTGltcGlhbmRvIGxvcyBkYXRvcwoKRWxpbWluYW1vcyBsb29wcyBkZSBsb3Mgbm9kb3MsIGVsaW1pbmFtb3Mgbm9kb3MgZGUgZW50cmFkYSAxIHkgc2FsaWRhIDAsIHkgYWwgZmluYWwsIGhhbGxhbW9zIGVsIGNvbXBvbmVudGUgZ2lnYW50ZS4gCgpgYGB7cn0KZ3JhcGhfMSA8LSAKICBzaW1wbGlmeShncmFwaCkgJT4lCiAgZGVsZXRlLnZlcnRpY2VzKHdoaWNoKGRlZ3JlZShncmFwaF8xLG1vZGUgPSAiaW4iKSA9PSAxICYKICAgICAgICAgICAgICAgICAgICAgICAgZGVncmVlKGdyYXBoXzEsbW9kZSA9ICJvdXQiKSA9PSAwKSkgJT4lCiAgZ2lhbnRfY29tcG9uZW50KCkKYGBgCgojIyBIYWxsYW1vcyBsYXMgc3ViYXJlcwoKYGBge3J9CnN1Yl9hcmVhcyA8LSBjbHVzdGVyX2Zhc3RfZ3JlZWR5KGFzLnVuZGlyZWN0ZWQoZ3JhcGhfMSkpIApWKGdyYXBoXzEpJHN1Yl9hcmVhIDwtIHN1Yl9hcmVhcyRtZW1iZXJzaGlwCnRhYmxlKFYoZ3JhcGhfMSkkc3ViX2FyZWEpCmBgYAoKCg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyBDcmVhbmRvIGVsIGVudG9ybm8KCmBgYHtyfQpsaWJyYXJ5KGlncmFwaCkKbGlicmFyeShDSU5OQSkKCiMgRnVuY3Rpb25zIAoKZ2lhbnRfY29tcG9uZW50IDwtIGZ1bmN0aW9uKGdyYXBoKSB7CmNsIDwtIGNsdXN0ZXJzKGdyYXBoKQppbmR1Y2VkLnN1YmdyYXBoKGdyYXBoLCB3aGljaChjbCRtZW1iZXJzaGlwID09IHdoaWNoLm1heChjbCRjc2l6ZSkpKX0KYGBgCgojIEFkcXVpcmllbmRvIGxvcyBkYXRvczogY3JlYW5kbyBsYSByZWQgZGUgY28tY2l0YWNpb25lcwoKYGBge3J9CmdyYXBoXzEgPC0gCiAgcmVmZXJlbmNlbGluayAlPiUKICBuYS5vbWl0KCkgJT4lCiAgaWdyYXBoOjpncmFwaC5kYXRhLmZyYW1lKGRpcmVjdGVkID0gVFJVRSkgCmBgYAoKIyMgTGltcGlhbmRvIGxvcyBkYXRvcwoKRWxpbWluYW1vcyBsb29wcyBkZSBsb3Mgbm9kb3MsIGVsaW1pbmFtb3Mgbm9kb3MgZGUgZW50cmFkYSAxIHkgc2FsaWRhIDAsIHkgYWwgZmluYWwsIGhhbGxhbW9zIGVsIGNvbXBvbmVudGUgZ2lnYW50ZS4gCgpgYGB7cn0KZ3JhcGhfMSA8LSAKICBzaW1wbGlmeShncmFwaF8xKSAlPiUKICBkZWxldGUudmVydGljZXMod2hpY2goZGVncmVlKGdyYXBoXzEsbW9kZSA9ICJpbiIpID09IDEgJgogICAgICAgICAgICAgICAgICAgICAgICBkZWdyZWUoZ3JhcGhfMSxtb2RlID0gIm91dCIpID09IDApKSAlPiUKICBnaWFudF9jb21wb25lbnQoKQpgYGAKCiMjIEhhbGxhbW9zIGxhcyBzdWJhcmVzCgpgYGB7cn0Kc3ViX2FyZWFzIDwtIGNsdXN0ZXJfZmFzdF9ncmVlZHkoYXMudW5kaXJlY3RlZChncmFwaF8xKSkKVihncmFwaF8xKSRzdWJfYXJlYSA8LSBzdWJfYXJlYXMkbWVtYmVyc2hpcAp0YWJsZShWKGdyYXBoXzEpJHN1Yl9hcmVhKQpgYGAKCgo=</div>
 
 
 
