@@ -1,0 +1,39 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+adquiriendo los datos
+
+```{r}
+source("WoS_to_Forest.R")
+```
+añadiendo citaciones
+```{r}
+referencelink.complete <- referencelink %>% na.omit()
+
+graph <- igraph::graph.data.frame(referencelink.complete, directed = TRUE)
+
+citaciones <- data.frame(id = V(graph)$name, 
+                         citaciones = degree(graph, 
+                                            mode = "in"),
+                         referencias = degree(graph, 
+                                             mode = "out"),
+                         stringsAsFactors = FALSE)
+
+df_paper <- paper %>% left_join(citaciones) 
+```
+añadiendo autores
+```{r}
+df_paper_autor <-
+  df_paper %>%
+  left_join(paperauthor,by = c("id" = "id_paper")) %>%
+  select(id_author, citaciones) %>%
+  na.omit() %>%
+  group_by(id_author) %>%
+  summarise(citaciones=sum(citaciones)) %>%
+  arrange(desc(citaciones)) %>%
+  head(10)
+
+  
+```
+
