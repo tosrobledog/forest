@@ -147,7 +147,7 @@ address <- data.frame(
         stringsAsFactors = FALSE
 )
 
-for(i in unique(address.df$author_full_name)) {
+for(i in unique(address.df[complete.cases(address.df),"author_full_name"])) {
         row.address.0 <- address.df[address.df$author_full_name == i,]
         row.address <- row.address.0[complete.cases(row.address.0),]
         reg.match <- str_match(
