@@ -1,0 +1,65 @@
+---
+title: "Sub groups co-authorships"
+output: html_notebook
+---
+
+# Creating the environment
+
+```{r}
+library(tidyverse)
+library(igraph)
+```
+
+# Getting data 
+
+```{r}
+
+```
+
+# Cleaning Data
+
+```{r}
+subgroups_co_authors <-
+  paperauthor %>%
+  na.omit()
+```
+
+
+# Tidying data 
+
+```{r}
+edgelist <- data.frame(Source = character(),
+                       Target = character(),
+                       stringsAsFactors = FALSE)
+
+list_ids_1 <- 
+  subgroups_co_authors %>% 
+  count(id_paper) %>%
+  filter(n >= 2) %>%
+  select(id_paper) %>%
+  distinct() 
+  
+list_ids_1 <- list_ids_1$id_paper
+
+for (i in list_ids_1) {
+  df_1 = paperauthor[paperauthor$id_paper == i,]
+  df_2 = combn(df_1$id_author, 2, simplify = FALSE )
+  df_3 = data.frame((t(data.frame(df_2))), i)
+  colnames(df_3) = c("Source", "Target",  "doi")
+  edgelist = rbind(edgelist, df_3)
+}
+  
+```
+
+# Creating the graph of co-authorships
+
+```{r}
+graph <- 
+  edgelist %>%
+  na.omit() %>%
+  select(Source, Target)
+
+graph <- graph.data.frame(graph, directed = FALSE)
+```
+
+
