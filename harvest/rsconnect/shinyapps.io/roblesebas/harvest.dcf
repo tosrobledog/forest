@@ -1,0 +1,12 @@
+name: harvest
+title: harvest
+username:
+account: roblesebas
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 349034
+bundleId: 1393272
+url: https://roblesebas.shinyapps.io/harvest/
+when: 1527265139.34145
+asMultiple: FALSE
+asStatic: FALSE
