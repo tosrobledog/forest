@@ -1,5 +1,6 @@
 ## app.R ##
 library(shinydashboard)
+library(shiny)
 
 ui <- dashboardPage(
   dashboardHeader(title = "Basic dashboard",
